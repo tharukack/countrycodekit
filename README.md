@@ -421,21 +421,23 @@ val international = CountryCodePhoneFormatter.format(
 
 Available final formats are `National`, `International`, `E164`, and `Rfc3966`. Invalid input or an unsupported region is returned unchanged.
 
-Apply optional live formatting inside your own field's change callback:
+For immediate as-you-type formatting without delays or cursor jumps, keep normalized raw input in your app-owned state and use `CountryCodePhoneVisualTransformation` through the text field's `visualTransformation` parameter:
 
 ```kotlin
+val phoneTransformation = remember(pickerState.selectedCountry.isoCode) {
+    CountryCodePhoneVisualTransformation(pickerState.selectedCountry)
+}
+
 OutlinedTextField(
     value = phoneNumber,
     onValueChange = { input ->
-        phoneNumber = CountryCodePhoneFormatter.formatAsYouType(
-            number = input,
-            country = pickerState.selectedCountry,
-        )
+        phoneNumber = CountryCodePhoneFormatter.normalizeInput(input)
     },
+    visualTransformation = phoneTransformation,
 )
 ```
 
-The sample enables as-you-type formatting by default and includes a switch to turn it off. CountryCodeKit supplies only the formatter—the text field remains fully owned by the host application.
+Do not call `formatAsYouType()` and save its formatted result back into the field state. The inserted spaces would become part of the raw value and repeated value replacement can disturb cursor selection. Store the result of `normalizeInput()` and let `visualTransformation` handle formatting only for display. The text field and its raw value remain owned by the host application.
 
 ---
 

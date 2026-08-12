@@ -13,6 +13,14 @@ enum class CountryCodePhoneFormat {
 
 /** Country-aware phone formatting backed by the bundled Google metadata. */
 object CountryCodePhoneFormatter {
+    /** Keeps only a leading plus and decimal digits for stable text-field state. */
+    fun normalizeInput(number: String): String = buildString {
+        if (number.trimStart().startsWith('+')) append('+')
+        number.forEach { character ->
+            if (character in '0'..'9') append(character)
+        }
+    }
+
     fun format(
         number: String,
         country: CountryCode,
@@ -48,12 +56,7 @@ object CountryCodePhoneFormatter {
         val region = defaultRegion.trim().uppercase()
         if (region !in PhoneEngine.util.getSupportedRegions()) return number
 
-        val normalizedInput = buildString {
-            if (number.trimStart().startsWith('+')) append('+')
-            number.forEach { character ->
-                if (character in '0'..'9') append(character)
-            }
-        }
+        val normalizedInput = normalizeInput(number)
         if (normalizedInput.isEmpty() || normalizedInput == "+") return normalizedInput
 
         val formatter = PhoneEngine.util.getAsYouTypeFormatter(region)

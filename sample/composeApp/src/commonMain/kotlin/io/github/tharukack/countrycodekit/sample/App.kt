@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,7 +25,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
@@ -48,14 +49,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,13 +65,13 @@ import io.github.tharukack.countrycodekit.CountryCodeCatalog
 import io.github.tharukack.countrycodekit.CountryCodePhoneResult
 import io.github.tharukack.countrycodekit.CountryCodePhoneFormatter
 import io.github.tharukack.countrycodekit.CountryCodePhoneStatus
+import io.github.tharukack.countrycodekit.CountryCodePhoneVisualTransformation
 import io.github.tharukack.countrycodekit.CountryCodePhoneValidator
 import io.github.tharukack.countrycodekit.CountryCodePicker
 import io.github.tharukack.countrycodekit.CountryCodePickerConfig
 import io.github.tharukack.countrycodekit.CountryCodePickerListConfig
 import io.github.tharukack.countrycodekit.CountryCodePickerSearchConfig
 import io.github.tharukack.countrycodekit.CountryCodePickerSelectionConfig
-import io.github.tharukack.countrycodekit.CountryCodePickerState
 import io.github.tharukack.countrycodekit.CountryCodePickerStyle
 import io.github.tharukack.countrycodekit.CountryCodePickerTriggerColors
 import io.github.tharukack.countrycodekit.CountryCodePickerTriggerConfig
@@ -133,6 +135,8 @@ private fun CountryCodeKitSample() {
 
 @Composable
 private fun CountryCodeKitHome() {
+    val focusManager = LocalFocusManager.current
+    val backgroundInteractionSource = remember { MutableInteractionSource() }
     val initialCountry = remember { CountryCodeCatalog.findByIsoCode("AU")!! }
     val pickerOnlyState = rememberCountryCodePickerState(initialCountry)
     val detachedPickerState = rememberCountryCodePickerState(initialCountry)
@@ -163,6 +167,11 @@ private fun CountryCodeKitHome() {
                 Brush.verticalGradient(
                     colors = listOf(Color(0xFFEAF8F2), Canvas, Canvas),
                 ),
+            )
+            .clickable(
+                interactionSource = backgroundInteractionSource,
+                indication = null,
+                onClick = { focusManager.clearFocus() },
             ),
     ) {
         Column(
@@ -214,39 +223,90 @@ private fun CountryCodeKitHome() {
                                 config = pickerConfig,
                                 modifier = Modifier.height(56.dp),
                             )
-                            PhoneNumberField(
+                            OutlinedTextField(
                                 value = detachedPhoneNumber,
-                                onValueChange = { input ->
-                                    detachedPhoneNumber = if (formatAsYouType) {
-                                        CountryCodePhoneFormatter.formatAsYouType(
-                                            input,
-                                            detachedPickerState.selectedCountry,
-                                        )
-                                    } else {
-                                        input
-                                    }
+                                onValueChange = {
+                                    detachedPhoneNumber = CountryCodePhoneFormatter.normalizeInput(it)
                                 },
+                                placeholder = { Text("Phone number") },
+                                singleLine = true,
+                                shape = RoundedCornerShape(14.dp),
+                                visualTransformation = if (formatAsYouType) {
+                                    CountryCodePhoneVisualTransformation(
+                                        detachedPickerState.selectedCountry,
+                                    )
+                                } else {
+                                    VisualTransformation.None
+                                },
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = androidx.compose.ui.text.input.KeyboardType.Phone,
+                                    imeAction = ImeAction.Done,
+                                ),
+                                keyboardActions = KeyboardActions(
+                                    onDone = { focusManager.clearFocus() },
+                                ),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Accent,
+                                    unfocusedBorderColor = Line,
+                                    focusedContainerColor = Color.White,
+                                    unfocusedContainerColor = Color.White,
+                                ),
                                 modifier = Modifier.weight(1f),
                             )
                         }
                     }
 
                     IntegrationExample(title = "3  Picker + app-owned attached field") {
-                        AttachedPhoneNumberField(
-                            value = attachedPhoneNumber,
-                            onValueChange = { input ->
-                                attachedPhoneNumber = if (formatAsYouType) {
-                                    CountryCodePhoneFormatter.formatAsYouType(
-                                        input,
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            CountryCodePicker(
+                                state = attachedPickerState,
+                                config = pickerConfig.copy(
+                                    trigger = pickerConfig.trigger.copy(
+                                        shape = RoundedCornerShape(
+                                            topStart = 14.dp,
+                                            bottomStart = 14.dp,
+                                        ),
+                                    ),
+                                ),
+                                modifier = Modifier.height(56.dp),
+                            )
+                            OutlinedTextField(
+                                value = attachedPhoneNumber,
+                                onValueChange = {
+                                    attachedPhoneNumber = CountryCodePhoneFormatter.normalizeInput(it)
+                                },
+                                placeholder = { Text("Phone number") },
+                                singleLine = true,
+                                shape = RoundedCornerShape(
+                                    topEnd = 14.dp,
+                                    bottomEnd = 14.dp,
+                                ),
+                                visualTransformation = if (formatAsYouType) {
+                                    CountryCodePhoneVisualTransformation(
                                         attachedPickerState.selectedCountry,
                                     )
                                 } else {
-                                    input
-                                }
-                            },
-                            pickerState = attachedPickerState,
-                            pickerConfig = pickerConfig,
-                        )
+                                    VisualTransformation.None
+                                },
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = androidx.compose.ui.text.input.KeyboardType.Phone,
+                                    imeAction = ImeAction.Done,
+                                ),
+                                keyboardActions = KeyboardActions(
+                                    onDone = { focusManager.clearFocus() },
+                                ),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Accent,
+                                    unfocusedBorderColor = Line,
+                                    focusedContainerColor = Color.White,
+                                    unfocusedContainerColor = Color.White,
+                                ),
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
                     }
 
                     HorizontalDivider(color = Line)
@@ -738,87 +798,6 @@ private fun IntegrationExample(
             fontWeight = FontWeight.SemiBold,
         )
         content()
-    }
-}
-
-@Composable
-private fun PhoneNumberField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        placeholder = { Text("Phone number") },
-        singleLine = true,
-        shape = RoundedCornerShape(14.dp),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = androidx.compose.ui.text.input.KeyboardType.Phone,
-            imeAction = ImeAction.Done,
-        ),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = Accent,
-            unfocusedBorderColor = Line,
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
-        ),
-        modifier = modifier,
-    )
-}
-
-@Composable
-private fun AttachedPhoneNumberField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    pickerState: CountryCodePickerState,
-    pickerConfig: CountryCodePickerConfig,
-) {
-    val shape = RoundedCornerShape(14.dp)
-    Surface(
-        modifier = Modifier.fillMaxWidth().height(56.dp).border(1.dp, Line, shape),
-        shape = shape,
-        color = Color.White,
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            CountryCodePicker(
-                state = pickerState,
-                config = pickerConfig.copy(
-                    trigger = pickerConfig.trigger.copy(
-                        shape = RoundedCornerShape(topStart = 14.dp, bottomStart = 14.dp),
-                    ),
-                ),
-                modifier = Modifier.height(56.dp),
-            )
-            Box(Modifier.width(1.dp).height(28.dp).background(Line))
-            BasicTextField(
-                value = value,
-                onValueChange = onValueChange,
-                modifier = Modifier.weight(1f),
-                singleLine = true,
-                textStyle = MaterialTheme.typography.bodyLarge.copy(color = Ink),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = androidx.compose.ui.text.input.KeyboardType.Phone,
-                    imeAction = ImeAction.Done,
-                ),
-                cursorBrush = SolidColor(Accent),
-                decorationBox = { innerTextField ->
-                    Box(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp),
-                        contentAlignment = Alignment.CenterStart,
-                    ) {
-                        if (value.isEmpty()) {
-                            Text(
-                                text = "Phone number",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                        innerTextField()
-                    }
-                },
-            )
-        }
     }
 }
 

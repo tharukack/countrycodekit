@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Grouped public options into clear `trigger` and `list` configurations.
 - Added mutually exclusive supported/unsupported country filtering using string ISO-code lists.
 - Exposed national, international, E.164, RFC3966, and as-you-type phone-number formatters.
+- Added normalized raw phone input and a cursor-aware visual transformation for app-owned fields.
 - Added trigger country-code text styling, chevron sizing, padding, and element-spacing options.
 - Kept colors scoped to their respective `trigger` and `list` configurations, with explicitly named color types.
 - Added optional list text-style overrides that merge with the host application's Material typography.
