@@ -176,3 +176,12 @@ data class CountryCodePickerConfig(
     val sheetHeightFraction: Float = 0.65f,
     val sheetGesturesEnabled: Boolean = false,
 )
+
+internal fun CountryCodePickerCountryFilter.includes(country: CountryCode): Boolean {
+    val isoCode = country.isoCode.uppercase()
+    return when (this) {
+        CountryCodePickerCountryFilter.All -> true
+        is CountryCodePickerCountryFilter.Supported -> isoCodes.any { it.uppercase() == isoCode }
+        is CountryCodePickerCountryFilter.Unsupported -> isoCodes.none { it.uppercase() == isoCode }
+    }
+}

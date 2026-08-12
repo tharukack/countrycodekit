@@ -57,16 +57,13 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.tharukack.countrycodekit.CountryCodeCatalog
 import io.github.tharukack.countrycodekit.CountryCodePhoneResult
-import io.github.tharukack.countrycodekit.CountryCodePhoneFormatter
+import io.github.tharukack.countrycodekit.CountryCodePhoneProcessing
 import io.github.tharukack.countrycodekit.CountryCodePhoneStatus
-import io.github.tharukack.countrycodekit.CountryCodePhoneVisualTransformation
-import io.github.tharukack.countrycodekit.CountryCodePhoneValidator
 import io.github.tharukack.countrycodekit.CountryCodePicker
 import io.github.tharukack.countrycodekit.CountryCodePickerConfig
 import io.github.tharukack.countrycodekit.CountryCodePickerListConfig
@@ -77,6 +74,7 @@ import io.github.tharukack.countrycodekit.CountryCodePickerTriggerColors
 import io.github.tharukack.countrycodekit.CountryCodePickerTriggerConfig
 import io.github.tharukack.countrycodekit.CountryCodePickerTriggerElement
 import io.github.tharukack.countrycodekit.rememberCountryCodePickerState
+import io.github.tharukack.countrycodekit.rememberCountryCodePhoneState
 
 private val Accent = Color(0xFF2F987A)
 private val AccentBright = Color(0xFF46BD99)
@@ -139,11 +137,6 @@ private fun CountryCodeKitHome() {
     val backgroundInteractionSource = remember { MutableInteractionSource() }
     val initialCountry = remember { CountryCodeCatalog.findByIsoCode("AU")!! }
     val pickerOnlyState = rememberCountryCodePickerState(initialCountry)
-    val detachedPickerState = rememberCountryCodePickerState(initialCountry)
-    val attachedPickerState = rememberCountryCodePickerState(initialCountry)
-    var detachedPhoneNumber by rememberSaveable { mutableStateOf("") }
-    var attachedPhoneNumber by rememberSaveable { mutableStateOf("") }
-    var formatAsYouType by rememberSaveable { mutableStateOf(true) }
     var pickerStyle by remember { mutableStateOf(CountryCodePickerStyle.BottomSheet) }
     var showRecents by rememberSaveable { mutableStateOf(true) }
     var separateByLetter by rememberSaveable { mutableStateOf(true) }
@@ -156,10 +149,15 @@ private fun CountryCodeKitHome() {
             ),
         )
     }
-    val validation = remember(attachedPhoneNumber, attachedPickerState.selectedCountry.isoCode) {
-        CountryCodePhoneValidator.validate(attachedPhoneNumber, attachedPickerState.selectedCountry)
-    }
-
+    val detachedPhoneState = rememberCountryCodePhoneState(
+        initialCountry = initialCountry,
+        processing = CountryCodePhoneProcessing.DetectCountry,
+        pickerConfig = pickerConfig,
+    )
+    val attachedPhoneState = rememberCountryCodePhoneState(
+        initialCountry = initialCountry,
+        pickerConfig = pickerConfig,
+    )
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -219,25 +217,17 @@ private fun CountryCodeKitHome() {
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             CountryCodePicker(
-                                state = detachedPickerState,
-                                config = pickerConfig,
+                                state = detachedPhoneState.pickerState,
+                                config = detachedPhoneState.pickerConfig,
                                 modifier = Modifier.height(56.dp),
                             )
                             OutlinedTextField(
-                                value = detachedPhoneNumber,
-                                onValueChange = {
-                                    detachedPhoneNumber = CountryCodePhoneFormatter.normalizeInput(it)
-                                },
+                                value = detachedPhoneState.rawNumber,
+                                onValueChange = detachedPhoneState::updateNumber,
                                 placeholder = { Text("Phone number") },
                                 singleLine = true,
                                 shape = RoundedCornerShape(14.dp),
-                                visualTransformation = if (formatAsYouType) {
-                                    CountryCodePhoneVisualTransformation(
-                                        detachedPickerState.selectedCountry,
-                                    )
-                                } else {
-                                    VisualTransformation.None
-                                },
+                                visualTransformation = detachedPhoneState.visualTransformation,
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = androidx.compose.ui.text.input.KeyboardType.Phone,
                                     imeAction = ImeAction.Done,
@@ -262,9 +252,9 @@ private fun CountryCodeKitHome() {
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             CountryCodePicker(
-                                state = attachedPickerState,
-                                config = pickerConfig.copy(
-                                    trigger = pickerConfig.trigger.copy(
+                                state = attachedPhoneState.pickerState,
+                                config = attachedPhoneState.pickerConfig.copy(
+                                    trigger = attachedPhoneState.pickerConfig.trigger.copy(
                                         shape = RoundedCornerShape(
                                             topStart = 14.dp,
                                             bottomStart = 14.dp,
@@ -274,23 +264,15 @@ private fun CountryCodeKitHome() {
                                 modifier = Modifier.height(56.dp),
                             )
                             OutlinedTextField(
-                                value = attachedPhoneNumber,
-                                onValueChange = {
-                                    attachedPhoneNumber = CountryCodePhoneFormatter.normalizeInput(it)
-                                },
+                                value = attachedPhoneState.rawNumber,
+                                onValueChange = attachedPhoneState::updateNumber,
                                 placeholder = { Text("Phone number") },
                                 singleLine = true,
                                 shape = RoundedCornerShape(
                                     topEnd = 14.dp,
                                     bottomEnd = 14.dp,
                                 ),
-                                visualTransformation = if (formatAsYouType) {
-                                    CountryCodePhoneVisualTransformation(
-                                        attachedPickerState.selectedCountry,
-                                    )
-                                } else {
-                                    VisualTransformation.None
-                                },
+                                visualTransformation = attachedPhoneState.visualTransformation,
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = androidx.compose.ui.text.input.KeyboardType.Phone,
                                     imeAction = ImeAction.Done,
@@ -312,9 +294,12 @@ private fun CountryCodeKitHome() {
                     HorizontalDivider(color = Line)
                     SettingRow(
                         title = "Format as you type",
-                        supporting = "Optional formatter applied by the host app. Enabled in this sample by default.",
-                        checked = formatAsYouType,
-                        onCheckedChange = { formatAsYouType = it },
+                        supporting = "Displays country-aware spacing without changing the raw value.",
+                        checked = attachedPhoneState.formatAsYouType,
+                        onCheckedChange = {
+                            attachedPhoneState.formatAsYouType = it
+                            detachedPhoneState.formatAsYouType = it
+                        },
                     )
                     HorizontalDivider(color = Line)
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -329,7 +314,7 @@ private fun CountryCodeKitHome() {
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
-                    ValidationPanel(validation)
+                    attachedPhoneState.validation?.let { ValidationPanel(it) }
                 }
             }
 

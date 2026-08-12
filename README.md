@@ -421,23 +421,65 @@ val international = CountryCodePhoneFormatter.format(
 
 Available final formats are `National`, `International`, `E164`, and `Rfc3966`. Invalid input or an unsupported region is returned unchanged.
 
-For immediate as-you-type formatting without delays or cursor jumps, keep normalized raw input in your app-owned state and use `CountryCodePhoneVisualTransformation` through the text field's `visualTransformation` parameter:
+The simplest integration uses one optional `CountryCodePhoneState`. It owns the raw phone value and coordinates formatting, validation, country detection, and picker state while the host application continues to own and render the text field:
 
 ```kotlin
-val phoneTransformation = remember(pickerState.selectedCountry.isoCode) {
-    CountryCodePhoneVisualTransformation(pickerState.selectedCountry)
-}
+val phoneState = rememberCountryCodePhoneState(
+    initialCountry = CountryCodeCatalog.findByIsoCode("AU")!!,
+    pickerConfig = CountryCodePickerConfig(),
+)
+
+CountryCodePicker(
+    state = phoneState.pickerState,
+    config = phoneState.pickerConfig,
+)
 
 OutlinedTextField(
-    value = phoneNumber,
-    onValueChange = { input ->
-        phoneNumber = CountryCodePhoneFormatter.normalizeInput(input)
-    },
-    visualTransformation = phoneTransformation,
+    value = phoneState.rawNumber,
+    onValueChange = phoneState::updateNumber,
+    visualTransformation = phoneState.visualTransformation,
+)
+
+val validation = phoneState.validation
+val e164 = phoneState.e164
+```
+
+By default, this state enables cursor-safe as-you-type formatting, full phone validation, and country detection. Detection updates the picker only for a complete, valid international number beginning with `+`; national numbers retain the selected country. Automatic matches respect the configured country filter and are not added to Recent selections.
+
+Choose lighter processing when needed:
+
+```kotlin
+val phoneState = rememberCountryCodePhoneState(
+    processing = CountryCodePhoneProcessing.Validate, // or None, DetectCountry
+    validationPreset = CountryCodePhoneValidationPreset.PhoneNumber,
+    pickerConfig = CountryCodePickerConfig(
+        countryFilter = CountryCodePickerCountryFilter.Supported(
+            listOf("AU", "NZ", "US"),
+        ),
+    ),
+    formatAsYouType = true,
 )
 ```
 
-Do not call `formatAsYouType()` and save its formatted result back into the field state. The inserted spaces would become part of the raw value and repeated value replacement can disturb cursor selection. Store the result of `normalizeInput()` and let `visualTransformation` handle formatting only for display. The text field and its raw value remain owned by the host application.
+`pickerConfig` is the single source of truth for both the visible picker list and automatic detection. Pass `phoneState.pickerConfig` to `CountryCodePicker`; a detected country outside its filter will never replace the selection.
+
+Do not call `formatAsYouType()` and save its formatted result into raw field state. Use `phoneState.visualTransformation` for immediate formatting without delays or cursor jumps. It keeps inserted spaces display-only and preserves cursor mapping.
+
+For custom state management, bind the lower-level validator once and pass each changing number to the required operation:
+
+```kotlin
+val phone = CountryCodePhoneValidator(
+    pickerState = pickerState,
+    preset = CountryCodePhoneValidationPreset.PhoneNumber,
+    countryFilter = config.countryFilter,
+)
+
+val validationOnly = phone.validate(rawInput)
+val detectedCountryOnly = phone.detectCountry(rawInput)
+val validationAndDetection = phone.validateAndDetectCountry(rawInput)
+```
+
+`validate()` never changes the picker. The two detection operations update it only for a complete, valid international number beginning with `+`, respect supported or unsupported country filters, and do not add automatic matches to recent user selections. National numbers retain the existing country because they cannot be identified reliably.
 
 ---
 

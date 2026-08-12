@@ -33,6 +33,10 @@ class CountryCodePickerState internal constructor(
         dismiss()
     }
 
+    internal fun selectDetectedCountry(country: CountryCode) {
+        selectedCountry = country
+    }
+
     private fun normalizeRecents(countries: List<CountryCode>): List<CountryCode> = countries
         .distinctBy { it.isoCode.uppercase() }
         .take(MAX_REMEMBERED_RECENTS)

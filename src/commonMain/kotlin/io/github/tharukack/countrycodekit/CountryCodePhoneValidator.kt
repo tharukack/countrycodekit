@@ -48,12 +48,41 @@ data class CountryCodePhoneResult(
     val e164: String? = null,
     val international: String? = null,
     val normalizedDigits: String = "",
+    val detectedCountry: CountryCode? = null,
 ) {
     val isValid: Boolean get() = status == CountryCodePhoneStatus.VALID
 }
 
 /** Parsing, formatting and validation backed by the bundled Google metadata. */
 object CountryCodePhoneValidator {
+    /** Creates a picker-bound processor so the caller can pass changing numbers to any operation. */
+    operator fun invoke(
+        pickerState: CountryCodePickerState,
+        preset: CountryCodePhoneValidationPreset = CountryCodePhoneValidationPreset.PhoneNumber,
+        countryFilter: CountryCodePickerCountryFilter = CountryCodePickerCountryFilter.All,
+    ): CountryCodePhoneProcessor = CountryCodePhoneProcessor(
+        pickerState = pickerState,
+        preset = preset,
+        countryFilter = countryFilter,
+    )
+
+    internal fun detectCountryValue(
+        number: String,
+        countryFilter: CountryCodePickerCountryFilter = CountryCodePickerCountryFilter.All,
+    ): CountryCode? {
+        val normalizedInput = CountryCodePhoneFormatter.normalizeInput(number)
+        if (!normalizedInput.startsWith('+')) return null
+        return try {
+            val parsed = PhoneEngine.util.parse(normalizedInput, null)
+            if (!PhoneEngine.util.isValidNumber(parsed)) return null
+            PhoneEngine.util.getRegionCodeForNumber(parsed)
+                ?.let(CountryCodeCatalog::findByIsoCode)
+                ?.takeIf(countryFilter::includes)
+        } catch (_: NumberParseException) {
+            null
+        }
+    }
+
     fun validate(number: String, country: CountryCode): CountryCodePhoneResult =
         validate(number, country.isoCode, CountryCodePhoneValidationPreset.PhoneNumber)
 
@@ -121,6 +150,15 @@ object CountryCodePhoneValidator {
         return try {
             val parsed = PhoneEngine.util.parse(number, region)
             val possible = PhoneEngine.util.isPossibleNumber(parsed)
+            val detectedCountry = if (
+                CountryCodePhoneFormatter.normalizeInput(number).startsWith('+') &&
+                PhoneEngine.util.isValidNumber(parsed)
+            ) {
+                PhoneEngine.util.getRegionCodeForNumber(parsed)
+                    ?.let(CountryCodeCatalog::findByIsoCode)
+            } else {
+                null
+            }
             when {
                 !possible -> CountryCodePhoneResult(
                     status = CountryCodePhoneStatus.IMPOSSIBLE,
@@ -129,6 +167,7 @@ object CountryCodePhoneValidator {
                 preset != CountryCodePhoneValidationPreset.PhoneNumber -> formattedResult(
                     parsed = parsed,
                     normalizedDigits = normalizedDigits,
+                    detectedCountry = detectedCountry,
                 )
                 !PhoneEngine.util.isValidNumber(parsed) -> CountryCodePhoneResult(
                     status = CountryCodePhoneStatus.INVALID,
@@ -139,6 +178,7 @@ object CountryCodePhoneValidator {
                     e164 = PhoneEngine.util.format(parsed, PhoneNumberFormat.E164),
                     international = PhoneEngine.util.format(parsed, PhoneNumberFormat.INTERNATIONAL),
                     normalizedDigits = normalizedDigits,
+                    detectedCountry = detectedCountry,
                 )
             }
         } catch (_: NumberParseException) {
@@ -172,12 +212,44 @@ object CountryCodePhoneValidator {
     private fun formattedResult(
         parsed: io.michaelrocks.libphonenumber.kotlin.Phonenumber.PhoneNumber,
         normalizedDigits: String,
+        detectedCountry: CountryCode?,
     ) = CountryCodePhoneResult(
         status = CountryCodePhoneStatus.VALID,
         e164 = PhoneEngine.util.format(parsed, PhoneNumberFormat.E164),
         international = PhoneEngine.util.format(parsed, PhoneNumberFormat.INTERNATIONAL),
         normalizedDigits = normalizedDigits,
+        detectedCountry = detectedCountry,
     )
 
     private fun String.isAsciiDigitsOnly(): Boolean = isNotEmpty() && all { it in '0'..'9' }
+}
+
+/** A reusable picker-bound phone processor created by [CountryCodePhoneValidator]. */
+class CountryCodePhoneProcessor internal constructor(
+    private val pickerState: CountryCodePickerState,
+    private val preset: CountryCodePhoneValidationPreset,
+    private val countryFilter: CountryCodePickerCountryFilter,
+) {
+    /** Validates without changing picker selection. */
+    fun validate(number: String): CountryCodePhoneResult =
+        CountryCodePhoneValidator.validate(number, pickerState.selectedCountry, preset)
+
+    /** Detects and applies a permitted country without returning validation. */
+    fun detectCountry(number: String): CountryCode? =
+        CountryCodePhoneValidator.detectCountryValue(number, countryFilter)
+            ?.also(pickerState::selectDetectedCountry)
+
+    /** Validates, then applies any permitted country detected from the same input. */
+    fun validateAndDetectCountry(number: String): CountryCodePhoneResult = validate(number).also {
+        val country = it.detectedCountry?.takeIf(countryFilter::includes) ?: when (preset) {
+            CountryCodePhoneValidationPreset.DigitsOnly,
+            is CountryCodePhoneValidationPreset.CustomLength,
+            -> CountryCodePhoneValidator.detectCountryValue(number, countryFilter)
+            CountryCodePhoneValidationPreset.PhoneNumber,
+            CountryCodePhoneValidationPreset.PossibleLength,
+            CountryCodePhoneValidationPreset.DigitsAndPossibleLength,
+            -> null
+        }
+        country?.let(pickerState::selectDetectedCountry)
+    }
 }
