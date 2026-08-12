@@ -4,6 +4,6 @@
 **/build/
 local.properties
 *.iml
-*.xcworkspace/xcuserdata/
-*.xcodeproj/xcuserdata/
+**/*.xcworkspace/xcuserdata/
+**/*.xcodeproj/xcuserdata/
 .DS_Store

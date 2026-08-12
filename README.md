@@ -52,13 +52,13 @@ Add CountryCodeKit to the Compose Multiplatform source set where the picker is u
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.tharukack:countrycodekit:<version>")
+            implementation("io.github.tharukack:countrycodekit:0.1.0")
         }
     }
 }
 ```
 
-Replace `<version>` with the latest published release. The project currently uses `0.1.0-SNAPSHOT` during development.
+CountryCodeKit is published to Maven Central. Use the same dependency from shared code for both Android and iOS Compose Multiplatform targets.
 
 ---
 

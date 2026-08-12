@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-08-12
+
 ### Library changes
 
 - Renamed the project, Maven artifact, frameworks, packages, sample identifiers, and public APIs to CountryCodeKit.
@@ -38,3 +40,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added an Android and iOS sample application.
 - Added exhaustive region metadata, flag coverage, validation, state, alphabetical-section, recents, and Compose UI tests.
 - Rebuilt the README using the same installation, quick-start, customization-table, API guidance, platform-support, and maintenance structure used by GuideKit.
+
+[Unreleased]: https://github.com/tharukack/countrycodekit/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/tharukack/countrycodekit/releases/tag/v0.1.0
