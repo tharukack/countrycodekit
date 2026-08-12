@@ -1,0 +1,36 @@
+# Changelog
+
+All notable changes to CountryCodeKit will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project follows semantic versioning.
+
+## [Unreleased]
+
+### Library changes
+
+- Renamed the project, Maven artifact, frameworks, packages, sample identifiers, and public APIs to CountryCodeKit.
+- Added the search-first picker design with polished color, spacing, shape, selection, and row defaults.
+- Added state-backed recent selections with configurable visibility and row limit instead of hard-coded popular countries.
+- Added configurable alphabetical country sections, enabled by default.
+- Removed ISO abbreviations from ordinary country rows while retaining ISO search and missing-flag fallback behavior.
+- Kept typography fully inherited from the host application's `MaterialTheme`.
+- Added bottom-sheet, dialog, and full-screen styles, with bottom sheet as the optional configuration's default.
+- Added configurable trigger content, container/content/chevron/border colors, optional border width, and host-defined trigger shapes.
+- Grouped public options into clear `trigger` and `list` configurations.
+- Added mutually exclusive supported/unsupported country filtering using string ISO-code lists.
+- Exposed national, international, E.164, RFC3966, and as-you-type phone-number formatters.
+- Added trigger country-code text styling, chevron sizing, padding, and element-spacing options.
+- Kept colors scoped to their respective `trigger` and `list` configurations, with explicitly named color types.
+- Added optional list text-style overrides that merge with the host application's Material typography.
+- Added complete search-box and selected-row shape, dimension, padding, border, and indicator configuration.
+- Bundled flag-icons 7.5.0 artwork as Android/iOS-compatible lossless PNG resources.
+- Added the project-maintained libphonenumber KMP port with Google 9.0.36 metadata.
+- Compiled the maintained phone engine and metadata directly into CountryCodeKit as a single published module.
+- Added full phone-number, possible-length, digits-only, digits-and-length, and custom-length validation presets.
+- Restricted supported targets to Android and iOS; removed the standalone JVM/desktop target.
+
+### Project and documentation
+
+- Added an Android and iOS sample application.
+- Added exhaustive region metadata, flag coverage, validation, state, alphabetical-section, recents, and Compose UI tests.
+- Rebuilt the README using the same installation, quick-start, customization-table, API guidance, platform-support, and maintenance structure used by GuideKit.

@@ -1,0 +1,31 @@
+name: Check upstream releases
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compare pinned snapshots with upstream
+        id: upstream
+        continue-on-error: true
+        run: ./scripts/check_upstreams.sh --remote 2>&1 | tee upstream-report.txt
+      - name: Open update issue
+        if: steps.upstream.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="Upstream country data or flag update available"
+          if gh issue list --state open --search "$title in:title" --json title --jq '.[].title' | grep -Fxq "$title"; then
+            echo "An upstream update issue is already open."
+          else
+            gh issue create --title "$title" --body-file upstream-report.txt --label dependencies
+          fi
