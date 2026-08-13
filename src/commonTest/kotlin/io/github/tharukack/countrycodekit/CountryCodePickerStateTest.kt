@@ -1,5 +1,6 @@
 package io.github.tharukack.countrycodekit
 
+import io.github.tharukack.countrycodekit.internal.CountryCodeRecentsRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -39,6 +40,28 @@ class CountryCodePickerStateTest {
         state.select(canada)
 
         assertEquals(listOf("CA", "AU"), state.recentSelections.map(CountryCode::isoCode))
+    }
+
+    @Test
+    fun recentSelectionsAreSharedPersistedAndLimitedToThree() {
+        var persistedIsoCodes = emptyList<String>()
+        val repository = CountryCodeRecentsRepository(emptyList()) { persistedIsoCodes = it }
+        val firstState = CountryCodePickerState(australia, recentsRepository = repository)
+        val secondState = CountryCodePickerState(canada, recentsRepository = repository)
+        val unitedStates = CountryCodeCatalog.findByIsoCode("US")!!
+        val newZealand = CountryCodeCatalog.findByIsoCode("NZ")!!
+
+        firstState.select(canada)
+        firstState.select(australia)
+        firstState.select(unitedStates)
+        firstState.select(newZealand)
+
+        assertEquals(listOf("NZ", "US", "AU"), persistedIsoCodes)
+        assertEquals(persistedIsoCodes, secondState.recentSelections.map(CountryCode::isoCode))
+
+        val restoredRepository = CountryCodeRecentsRepository(persistedIsoCodes) { }
+        val recreatedState = CountryCodePickerState(canada, recentsRepository = restoredRepository)
+        assertEquals(persistedIsoCodes, recreatedState.recentSelections.map(CountryCode::isoCode))
     }
 
     @Test

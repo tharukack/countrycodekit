@@ -99,8 +99,9 @@ class CountryCodePhoneState internal constructor(
 }
 
 /**
- * Creates the unified phone and picker state. [initialRecentSelections] accepts ISO 3166-1
- * alpha-2 codes; matching is case-insensitive and unknown codes are ignored.
+ * Creates the unified phone and picker state. [initialRecentSelections] seeds the library's
+ * empty shared persistent recents using ISO 3166-1 alpha-2 codes; matching is case-insensitive
+ * and unknown codes are ignored.
  */
 @Composable
 fun rememberCountryCodePhoneState(

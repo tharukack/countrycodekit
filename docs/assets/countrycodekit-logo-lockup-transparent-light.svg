@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" role="img" aria-labelledby="title desc">
+  <title id="title">CountryCodeKit Compose</title>
+  <desc id="desc">Transparent CountryCodeKit globe logo and wordmark for light backgrounds.</desc>
+  <defs>
+    <linearGradient id="mint" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#70E6C1"/>
+      <stop offset="1" stop-color="#35AD8B"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="#35AD8B" stroke-width="8" stroke-linecap="round">
+    <path d="M118 164v-34q0-22 22-22h34M278 108h34q22 0 22 22v34M118 276v34q0 22 22 22h34M278 332h34q22 0 22-22v-34"/>
+  </g>
+  <g stroke="#49C6A1" stroke-width="8" stroke-linecap="round">
+    <path d="M226 89V59M190 96l-14-27M262 96l14-27"/>
+  </g>
+  <g transform="translate(145 126)">
+    <rect width="162" height="162" rx="46" fill="url(#mint)"/>
+    <circle cx="81" cy="81" r="54" fill="none" stroke="#0C1C33" stroke-width="9"/>
+    <path d="M27 81h108M81 27c20 17 29 34 29 54s-9 37-29 54M81 27C61 44 52 61 52 81s9 37 29 54" fill="none" stroke="#0C1C33" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-weight="760" letter-spacing="-2.3">
+    <text x="390" y="241" fill="#0C1C33" font-size="62">CountryCodeKit</text>
+    <text x="824" y="241" fill="#299C7C" font-size="62">Compose</text>
+  </g>
+</svg>

@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Project and documentation
+
+- Made the release workflow publish the matching changelog section and update existing GitHub releases safely when rerun.
+
+### Library changes
+
+- Made the three most recent manual country selections shared across picker instances and persisted automatically with native Android and iOS storage, without adding public configuration.
+
 ## [1.0.0] - 2026-08-13
 
 ### Library changes

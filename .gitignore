@@ -7,3 +7,4 @@ local.properties
 **/*.xcworkspace/xcuserdata/
 **/*.xcodeproj/xcuserdata/
 .DS_Store
+demo/*

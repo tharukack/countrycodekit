@@ -7,11 +7,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import io.github.tharukack.countrycodekit.internal.CountryCodeRecentsRepository
+import io.github.tharukack.countrycodekit.internal.rememberCountryCodeRecentsRepository
 
 @Stable
 class CountryCodePickerState internal constructor(
     initialCountry: CountryCode,
     initialRecentSelections: List<CountryCode> = emptyList(),
+    private val recentsRepository: CountryCodeRecentsRepository? = null,
 ) {
     var selectedCountry by mutableStateOf(initialCountry)
         private set
@@ -19,8 +22,17 @@ class CountryCodePickerState internal constructor(
         private set
     var query by mutableStateOf("")
         private set
-    var recentSelections by mutableStateOf(normalizeRecents(initialRecentSelections))
-        private set
+    private var isolatedRecentSelections by mutableStateOf(normalizeRecents(initialRecentSelections))
+
+    var recentSelections: List<CountryCode>
+        get() = recentsRepository?.recentSelections ?: isolatedRecentSelections
+        private set(value) {
+            isolatedRecentSelections = normalizeRecents(value)
+        }
+
+    init {
+        recentsRepository?.seedIfEmpty(initialRecentSelections)
+    }
 
     fun open() { isOpen = true }
     fun dismiss() {
@@ -29,7 +41,11 @@ class CountryCodePickerState internal constructor(
     }
     fun updateQuery(value: String) { query = value }
     fun select(country: CountryCode) {
-        recentSelections = normalizeRecents(listOf(country) + recentSelections)
+        if (recentsRepository != null) {
+            recentsRepository.select(country)
+        } else {
+            recentSelections = listOf(country) + isolatedRecentSelections
+        }
         selectedCountry = country
         dismiss()
     }
@@ -43,12 +59,13 @@ class CountryCodePickerState internal constructor(
         .take(MAX_REMEMBERED_RECENTS)
 
     private companion object {
-        const val MAX_REMEMBERED_RECENTS = 12
+        const val MAX_REMEMBERED_RECENTS = 3
     }
 }
 
 /**
- * Creates saveable picker state. [initialRecentSelections] accepts ISO 3166-1 alpha-2 codes;
+ * Creates saveable picker state connected to the library's shared persistent recents.
+ * [initialRecentSelections] seeds an empty stored list using ISO 3166-1 alpha-2 codes;
  * matching is case-insensitive and unknown codes are ignored.
  */
 @Composable
@@ -57,6 +74,7 @@ fun rememberCountryCodePickerState(
         ?: CountryCodeCatalog.countries.first(),
     initialRecentSelections: List<String> = emptyList(),
 ): CountryCodePickerState {
+    val recentsRepository = rememberCountryCodeRecentsRepository()
     val isoCode = initialCountry.isoCode
     val initialRecentsKey = initialRecentSelections.joinToString(",") { it.trim().uppercase() }
     val initialRecentCountries = remember(initialRecentsKey) {
@@ -77,10 +95,10 @@ fun rememberCountryCodePickerState(
                 .split(',')
                 .filter(String::isNotBlank)
                 .mapNotNull(CountryCodeCatalog::findByIsoCode)
-            CountryCodePickerState(restoredCountry, restoredRecents).also { state ->
+            CountryCodePickerState(restoredCountry, restoredRecents, recentsRepository).also { state ->
                 if (values[1].toBoolean()) state.open()
                 state.updateQuery(values[2])
             }
         },
-    )) { CountryCodePickerState(initialCountry, initialRecentCountries) }
+    )) { CountryCodePickerState(initialCountry, initialRecentCountries, recentsRepository) }
 }

@@ -43,6 +43,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -82,6 +83,7 @@ import io.github.tharukack.countrycodekit.CountryCodePickerTriggerElement
 import io.github.tharukack.countrycodekit.rememberCountryCodePickerState
 import io.github.tharukack.countrycodekit.rememberCountryCodePhoneState
 import kotlin.math.roundToInt
+import kotlinx.coroutines.delay
 
 private val Accent = Color(0xFF2F987A)
 private val AccentBright = Color(0xFF46BD99)
@@ -110,25 +112,35 @@ private val AppColors = lightColorScheme(
 )
 
 @Composable
-fun App() {
+fun App(autoDemo: Boolean = false) {
     MaterialTheme(colorScheme = AppColors) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background,
         ) {
-            CountryCodeKitSample()
+            CountryCodeKitSample(autoDemo = autoDemo)
         }
     }
 }
 
 @Composable
-private fun CountryCodeKitSample() {
-    var page by rememberSaveable { mutableStateOf(SamplePage.Home) }
+private fun CountryCodeKitSample(autoDemo: Boolean) {
+    var page by if (autoDemo) {
+        remember { mutableStateOf(SamplePage.PickerStyle) }
+    } else {
+        rememberSaveable { mutableStateOf(SamplePage.Home) }
+    }
+
+    LaunchedEffect(autoDemo) {
+        if (!autoDemo) return@LaunchedEffect
+        delay(13_700)
+        page = SamplePage.Home
+    }
 
     Box(Modifier.fillMaxSize()) {
         when (page) {
-            SamplePage.Home -> CountryCodeKitHome()
-            SamplePage.PickerStyle -> PickerStylePage()
+            SamplePage.Home -> CountryCodeKitHome(autoDemo = autoDemo)
+            SamplePage.PickerStyle -> PickerStylePage(autoDemo = autoDemo)
         }
         SampleBottomBar(
             selected = page,
@@ -139,7 +151,7 @@ private fun CountryCodeKitSample() {
 }
 
 @Composable
-private fun CountryCodeKitHome() {
+private fun CountryCodeKitHome(autoDemo: Boolean) {
     val focusManager = LocalFocusManager.current
     val backgroundInteractionSource = remember { MutableInteractionSource() }
     val initialCountry = remember { CountryCodeCatalog.findByIsoCode("AU")!! }
@@ -163,6 +175,21 @@ private fun CountryCodeKitHome() {
         initialCountry = initialCountry,
         pickerConfig = fieldPickerConfig,
     )
+    LaunchedEffect(autoDemo) {
+        if (!autoDemo) return@LaunchedEffect
+
+        delay(700)
+        attachedPhoneState.formatAsYouType = true
+        listOf("4", "41", "412", "4123", "41234", "412345", "4123456", "41234567", "412345678")
+            .forEach { value ->
+                attachedPhoneState.updateNumber(value)
+                delay(240)
+            }
+        delay(1_000)
+        attachedPhoneState.updateNumber("12")
+        delay(1_050)
+        attachedPhoneState.updateNumber("412345678")
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -338,7 +365,7 @@ private enum class TriggerTextSize { Small, Default, Large }
 private enum class TriggerColorChoice { Palette, Ink, Accent, White }
 
 @Composable
-private fun PickerStylePage() {
+private fun PickerStylePage(autoDemo: Boolean) {
     val initialCountry = remember { CountryCodeCatalog.findByIsoCode("AU")!! }
     val pickerState = rememberCountryCodePickerState(initialCountry)
     var pickerStyle by rememberSaveable { mutableStateOf(CountryCodePickerStyle.BottomSheet) }
@@ -367,6 +394,37 @@ private fun PickerStylePage() {
     var dialogHeight by rememberSaveable { mutableStateOf(620) }
     var useStatusBarPadding by rememberSaveable { mutableStateOf(true) }
     var useNavigationBarPadding by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(autoDemo) {
+        if (!autoDemo) return@LaunchedEffect
+
+        // Exercise the real picker state before recording-worthy frames so flags, metadata,
+        // presentation containers, and recents are all warm and populated.
+        listOf("NZ", "US", "CA", "AU").forEach { isoCode ->
+            pickerState.open()
+            delay(180)
+            CountryCodeCatalog.findByIsoCode(isoCode)?.let(pickerState::select)
+            delay(180)
+        }
+
+        delay(1_250)
+        pickerStyle = CountryCodePickerStyle.BottomSheet
+        pickerState.open()
+        delay(3_000)
+        pickerState.dismiss()
+        delay(350)
+
+        pickerStyle = CountryCodePickerStyle.Dialog
+        pickerState.open()
+        delay(3_000)
+        pickerState.dismiss()
+        delay(350)
+
+        pickerStyle = CountryCodePickerStyle.FullScreen
+        pickerState.open()
+        delay(3_000)
+        pickerState.dismiss()
+    }
 
     val triggerShape: Shape = if (usePillShape) CircleShape else when (cornerRadius) {
         0 -> RectangleShape

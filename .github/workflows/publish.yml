@@ -31,16 +31,46 @@ jobs:
         run: |
           ./scripts/check_upstreams.sh
           test "${RELEASE_TAG#v}" = "$(./gradlew properties -q | awk '/^version:/ { print $2 }')"
+      - name: Prepare changelog release notes
+        run: |
+          version="${RELEASE_TAG#v}"
+          awk -v heading="## [$version]" '
+            index($0, heading) == 1 { found = 1; next }
+            found && /^## \[/ { exit }
+            found { print }
+            END { if (!found) exit 1 }
+          ' CHANGELOG.md > release-notes.md
+          if ! grep -q '[^[:space:]]' release-notes.md; then
+            echo "CHANGELOG.md has no release notes for $version." >&2
+            exit 1
+          fi
+      - name: Check for existing GitHub release
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: Build and test
         run: ./gradlew iosSimulatorArm64Test build --stacktrace
       - name: Publish to Maven Central
+        if: steps.release.outputs.exists != 'true'
         run: ./gradlew publishAndReleaseToMavenCentral --stacktrace
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
-      - name: Create GitHub release
-        run: gh release create "$RELEASE_TAG" --verify-tag --generate-notes --title "CountryCodeKit Compose ${RELEASE_TAG#v}"
+      - name: Create or update GitHub release
+        run: |
+          title="CountryCodeKit Compose ${RELEASE_TAG#v}"
+          if [[ "${{ steps.release.outputs.exists }}" == "true" ]]; then
+            gh release edit "$RELEASE_TAG" --title "$title" --notes-file release-notes.md
+          else
+            gh release create "$RELEASE_TAG" --verify-tag --title "$title" --notes-file release-notes.md
+          fi
         env:
           GH_TOKEN: ${{ github.token }}

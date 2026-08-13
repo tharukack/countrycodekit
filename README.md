@@ -1,14 +1,12 @@
-<h1 align="center">CountryCodeKit Compose</h1>
-
 <p align="center">
-  <strong>A polished country calling-code picker for Compose Multiplatform</strong>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/countrycodekit-logo-lockup-transparent.png" />
+    <img src="docs/assets/countrycodekit-logo-lockup-transparent-light.png" alt="CountryCodeKit Compose" width="620" />
+  </picture>
 </p>
 
 <p align="center">
-  Search countries, show recent selections, browse optional A–Z sections, render bundled flags, and validate phone numbers offline on Android and iOS.
-</p>
-
-<p align="center">
+  <a href="https://central.sonatype.com/artifact/io.github.tharukack/countrycodekit"><img alt="Maven Central" src="https://img.shields.io/maven-central/v/io.github.tharukack/countrycodekit?style=for-the-badge&amp;color=49C6A1" /></a>
   <img alt="Android" src="https://img.shields.io/badge/Android-supported-16A34A?style=for-the-badge&logo=android&logoColor=white" />
   <img alt="iOS" src="https://img.shields.io/badge/iOS-supported-2563EB?style=for-the-badge&logo=apple&logoColor=white" />
   <img alt="Kotlin Multiplatform" src="https://img.shields.io/badge/Kotlin%20Multiplatform-ready-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" />
@@ -16,12 +14,33 @@
 </p>
 
 <p align="center">
+  <strong>A polished country calling-code picker for Compose Multiplatform.</strong><br />
+  Search countries, display recent selections, browse A–Z sections, format input, and validate phone numbers locally on Android and iOS.
+</p>
+
+<p align="center">
+  <a href="#live-demo">Live Demo</a> ·
+  <a href="#features">Features</a> ·
   <a href="#installation">Installation</a> ·
   <a href="#quick-start">Quick Start</a> ·
   <a href="#api-and-customization-reference">API Reference</a> ·
   <a href="#phone-number-validation">Validation</a> ·
   <a href="#platform-support">Platform Support</a>
 </p>
+
+<br />
+
+<p align="center">
+  <img src="docs/assets/countrycodekit-readme-banner-2x1.png" alt="CountryCodeKit Compose — country selection that feels native" width="100%" />
+</p>
+
+## Live Demo
+
+<p align="center">
+  <img src="docs/assets/country-code-picker-demo-16x9.gif" alt="CountryCodeKit Compose running on iOS" width="100%" />
+</p>
+
+The real iOS sample demonstrates the searchable country picker, bottom-sheet, dialog and full-screen presentations, format-as-you-type phone input, and local Google libphonenumber validation.
 
 ---
 
@@ -82,7 +101,7 @@ Text(selected.name)
 Text(selected.formattedCallingCode)
 ```
 
-To choose the initial country or seed recent selections, provide the country once and use plain ISO codes for recents:
+To choose the initial country or seed recents when the library has no stored selections yet, provide the country once and use plain ISO codes for recents:
 
 ```kotlin
 val australia = CountryCodeCatalog.findByIsoCode("AU")!!
@@ -92,7 +111,7 @@ val pickerState = rememberCountryCodePickerState(
 )
 ```
 
-Recent selections survive saveable-state restoration. They are held locally in state and are never uploaded or persisted by the library.
+The three most recent manual selections are shared automatically between picker instances and persisted locally on the device. They survive navigation, picker-state recreation, process termination, and app restarts. Country detection does not add a recent selection, and CountryCodeKit Compose stores only ISO country codes—never phone numbers or other user data.
 
 ---
 
@@ -323,7 +342,7 @@ CountryCodePicker(
 | --- | --- |
 | `CountryCode` | Immutable selected-country value containing `isoCode`, `name`, `callingCode`, and `formattedCallingCode`. |
 | `CountryCodeCatalog` | Bundled searchable country catalog with `countries`, `findByIsoCode`, `search`, and `hasBundledFlag`. |
-| `rememberCountryCodePickerState` | Creates saveable selection, open/closed, search-query, and recent-selection state. Initial recents accept ISO-code strings. |
+| `rememberCountryCodePickerState` | Creates saveable selection, open/closed, and search-query state connected to the library's shared, locally persisted recent selections. Initial recents accept ISO-code strings. |
 | `CountryCodePickerState` | Exposes `selectedCountry`, `isOpen`, `query`, and `recentSelections`, plus `open`, `dismiss`, `updateQuery`, and `select`. |
 | `CountryCodePicker` | Renders the trigger and selected presentation using the supplied state and optional configuration. |
 | `CountryCodePickerConfig` | Groups style, filtering, trigger, country-list, and style-specific configuration. |
@@ -351,7 +370,7 @@ CountryCodePicker(
 )
 ```
 
-`BottomSheet` is the default style. `Dialog` presents the same content in a centered container, and `FullScreen` uses the available window. Search matches country names, ISO codes, and calling codes. Recent cards appear only after selections exist or when initial ISO codes are supplied.
+`BottomSheet` is the default style. `Dialog` presents the same content in a centered container, and `FullScreen` uses the available window. Search matches country names, ISO codes, and calling codes. Recent cards appear after manual selections exist or when initial ISO codes seed an empty stored list.
 
 | Option | Default | Purpose |
 | --- | --- | --- |
@@ -418,7 +437,7 @@ val countryListConfig = CountryCodePickerCountryListConfig(
 )
 ```
 
-`CountryCodePickerCountryListConfig` owns everything rendered inside the selected presentation: search, calling-code visibility, recent cards, alphabetical sections, search focus, list flag style, strings, text styles, search shape, selection shape, and colors.
+`CountryCodePickerCountryListConfig` owns everything rendered inside the selected presentation: search, calling-code visibility, recent cards, alphabetical sections, search focus, list flag style, strings, text styles, search shape, selection shape, and colors. The library remembers and displays up to three manual selections across picker instances and app restarts.
 
 Set `separateCountriesByLetter = false` for one continuous list. `showSearch`, `showCallingCode`, and `showRecentSelections` independently control the corresponding list features. `recentSelectionLimit` is constrained to the responsive recent-card capacity of three.
 
