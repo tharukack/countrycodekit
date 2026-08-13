@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="640" viewBox="0 0 1600 640" role="img" aria-labelledby="title desc">
+  <title id="title">CountryCodeKit Compose product banner</title>
+  <desc id="desc">A compact product banner with abstract country picker interface cards.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#09162A"/>
+      <stop offset="0.62" stop-color="#0C2030"/>
+      <stop offset="1" stop-color="#123C3D"/>
+    </linearGradient>
+    <linearGradient id="mint" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#70E6C1"/>
+      <stop offset="1" stop-color="#35AD8B"/>
+    </linearGradient>
+    <radialGradient id="glow">
+      <stop offset="0" stop-color="#49C6A1" stop-opacity="0.36"/>
+      <stop offset="1" stop-color="#49C6A1" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-40%" y="-40%" width="180%" height="190%">
+      <feDropShadow dx="0" dy="20" stdDeviation="20" flood-color="#020A11" flood-opacity="0.48"/>
+    </filter>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.4" fill="#70E6C1" opacity="0.18"/>
+    </pattern>
+    <clipPath id="recentFlag1"><rect x="0" y="0" width="25" height="18" rx="4"/></clipPath>
+    <clipPath id="recentFlag2"><rect x="0" y="0" width="25" height="18" rx="4"/></clipPath>
+    <clipPath id="recentFlag3"><rect x="0" y="0" width="25" height="18" rx="4"/></clipPath>
+    <clipPath id="listFlag1"><rect x="0" y="0" width="38" height="25" rx="6"/></clipPath>
+    <clipPath id="listFlag2"><rect x="0" y="0" width="38" height="25" rx="6"/></clipPath>
+    <clipPath id="listFlag3"><rect x="0" y="0" width="38" height="25" rx="6"/></clipPath>
+    <clipPath id="listFlag4"><rect x="0" y="0" width="38" height="25" rx="6"/></clipPath>
+  </defs>
+
+  <rect width="1600" height="640" rx="28" fill="url(#bg)"/>
+  <circle cx="1340" cy="235" r="430" fill="url(#glow)"/>
+  <path d="M1100 0h500v640h-650c120-110 115-225 47-340C940 205 975 95 1100 0Z" fill="#49C6A1" opacity="0.06"/>
+  <rect x="1190" y="36" width="390" height="270" fill="url(#dots)"/>
+
+  <!-- Compact logo -->
+  <g transform="translate(92 74)">
+    <rect width="76" height="76" rx="21" fill="url(#mint)"/>
+    <circle cx="38" cy="38" r="25" fill="none" stroke="#092033" stroke-width="4"/>
+    <path d="M13 38h50M38 13c9 8 14 16 14 25s-5 17-14 25M38 13c-9 8-14 16-14 25s5 17 14 25" fill="none" stroke="#092033" stroke-width="3.6" stroke-linecap="round"/>
+  </g>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="760" letter-spacing="-1.4">
+    <text x="190" y="125" fill="#F8FFFC">CountryCodeKit</text>
+    <text x="475" y="125" fill="#5CDBB3">Compose</text>
+  </g>
+
+  <text x="92" y="246" fill="#F8FFFC" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="64" font-weight="800" letter-spacing="-2.6">Country selection</text>
+  <text x="92" y="319" fill="#F8FFFC" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="64" font-weight="800" letter-spacing="-2.6">that feels native.</text>
+  <text x="92" y="382" fill="#B8D0C9" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="460">Search, format, and validate phone numbers offline</text>
+  <text x="92" y="418" fill="#B8D0C9" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="460">with one Compose Multiplatform library.</text>
+
+  <g transform="translate(92 475)" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700">
+    <rect width="154" height="48" rx="14" fill="#49C6A1" fill-opacity="0.11" stroke="#62DDB7" stroke-opacity="0.36"/>
+    <text x="22" y="31" fill="#DDF9EF">271 countries</text>
+    <rect x="168" width="164" height="48" rx="14" fill="#49C6A1" fill-opacity="0.11" stroke="#62DDB7" stroke-opacity="0.36"/>
+    <text x="190" y="31" fill="#DDF9EF">Android + iOS</text>
+    <rect x="346" width="135" height="48" rx="14" fill="#49C6A1" fill-opacity="0.11" stroke="#62DDB7" stroke-opacity="0.36"/>
+    <text x="368" y="31" fill="#DDF9EF">Offline first</text>
+  </g>
+
+  <!-- Abstract product mockups; intentionally illustrative, not screenshots. -->
+  <g filter="url(#shadow)" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif">
+    <g transform="translate(1045 115) rotate(-5 180 215)" opacity="0.68">
+      <rect width="360" height="430" rx="29" fill="#DCEBE6" stroke="#7DA89A" stroke-width="3"/>
+      <rect x="24" y="24" width="312" height="42" rx="14" fill="#C8DAD4"/>
+      <text x="44" y="51" fill="#5C736D" font-size="16" font-weight="650">Phone number</text>
+      <path d="M28 101h304M28 169h304M28 237h304M28 305h304" stroke="#AFC6BF" stroke-width="2"/>
+      <g fill="#87B0A4"><rect x="28" y="117" width="42" height="28" rx="7"/><rect x="28" y="185" width="42" height="28" rx="7"/><rect x="28" y="253" width="42" height="28" rx="7"/></g>
+      <g fill="#6E8780"><rect x="87" y="121" width="142" height="11" rx="5"/><rect x="87" y="189" width="176" height="11" rx="5"/><rect x="87" y="257" width="125" height="11" rx="5"/></g>
+    </g>
+
+    <g transform="translate(1218 70)">
+      <rect width="310" height="490" rx="34" fill="#F7FBFA" stroke="#A8C2BA" stroke-width="3"/>
+      <text x="26" y="50" fill="#102039" font-size="22" font-weight="800">Select your country</text>
+      <rect x="24" y="72" width="262" height="46" rx="14" fill="#EAF1EF"/>
+      <circle cx="44" cy="95" r="8" fill="none" stroke="#758B86" stroke-width="2"/>
+      <path d="M50 101l7 7" stroke="#758B86" stroke-width="2" stroke-linecap="round"/>
+      <text x="68" y="101" fill="#758B86" font-size="14">Search country or code</text>
+      <text x="25" y="151" fill="#102039" font-size="14" font-weight="750">Recent</text>
+      <g transform="translate(24 166)">
+        <rect width="80" height="48" rx="12" fill="#DDF4EC" stroke="#78C9B0"/>
+        <rect x="91" width="80" height="48" rx="12" fill="#F4F7F6" stroke="#D0DDDA"/>
+        <rect x="182" width="80" height="48" rx="12" fill="#F4F7F6" stroke="#D0DDDA"/>
+        <g transform="translate(8 8)"><image width="25" height="18" href="file:///Users/tharukachathura/PROJ/countrycodekit/src/commonMain/composeResources/drawable/flag_au.png" preserveAspectRatio="xMidYMid slice" clip-path="url(#recentFlag1)"/></g>
+        <g transform="translate(99 8)"><image width="25" height="18" href="file:///Users/tharukachathura/PROJ/countrycodekit/src/commonMain/composeResources/drawable/flag_ca.png" preserveAspectRatio="xMidYMid slice" clip-path="url(#recentFlag2)"/></g>
+        <g transform="translate(190 8)"><image width="25" height="18" href="file:///Users/tharukachathura/PROJ/countrycodekit/src/commonMain/composeResources/drawable/flag_us.png" preserveAspectRatio="xMidYMid slice" clip-path="url(#recentFlag3)"/></g>
+        <g font-size="10" font-weight="700"><text x="10" y="42" fill="#102039">AU +61</text><text x="101" y="42" fill="#102039">CA +1</text><text x="192" y="42" fill="#102039">US +1</text></g>
+      </g>
+      <text x="25" y="246" fill="#102039" font-size="14" font-weight="750">All countries</text>
+      <g transform="translate(24 268)">
+        <g transform="translate(0 0)"><image width="38" height="25" href="file:///Users/tharukachathura/PROJ/countrycodekit/src/commonMain/composeResources/drawable/flag_au.png" preserveAspectRatio="xMidYMid slice" clip-path="url(#listFlag1)"/></g>
+        <g transform="translate(0 55)"><image width="38" height="25" href="file:///Users/tharukachathura/PROJ/countrycodekit/src/commonMain/composeResources/drawable/flag_ca.png" preserveAspectRatio="xMidYMid slice" clip-path="url(#listFlag2)"/></g>
+        <g transform="translate(0 110)"><image width="38" height="25" href="file:///Users/tharukachathura/PROJ/countrycodekit/src/commonMain/composeResources/drawable/flag_nz.png" preserveAspectRatio="xMidYMid slice" clip-path="url(#listFlag3)"/></g>
+        <g transform="translate(0 165)"><image width="38" height="25" href="file:///Users/tharukachathura/PROJ/countrycodekit/src/commonMain/composeResources/drawable/flag_us.png" preserveAspectRatio="xMidYMid slice" clip-path="url(#listFlag4)"/></g>
+        <g fill="#102039" font-size="15" font-weight="650"><text x="52" y="19">Australia</text><text x="52" y="74">Canada</text><text x="52" y="129">New Zealand</text><text x="52" y="184">United States</text></g>
+        <g fill="#2DA17F" font-size="14" font-weight="700" text-anchor="end"><text x="260" y="19">+61</text><text x="260" y="74">+1</text><text x="260" y="129">+64</text><text x="260" y="184">+1</text></g>
+        <path d="M0 38h262M0 93h262M0 148h262" stroke="#DCE6E3"/>
+      </g>
+    </g>
+
+    <g transform="translate(957 326)">
+      <rect width="235" height="158" rx="22" fill="#F8FCFB" stroke="#A8C2BA" stroke-width="2"/>
+      <text x="21" y="37" fill="#102039" font-size="16" font-weight="800">Phone validation</text>
+      <rect x="19" y="56" width="197" height="42" rx="12" fill="#E5F6F0"/>
+      <circle cx="39" cy="77" r="10" fill="#3DB28D"/>
+      <path d="M34 77l4 4 7-9" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="58" y="82" fill="#277D66" font-size="14" font-weight="700">Valid phone number</text>
+      <text x="21" y="129" fill="#758B86" font-size="13">+61 412 345 678</text>
+    </g>
+  </g>
+</svg>
