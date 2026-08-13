@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 
@@ -46,14 +47,21 @@ class CountryCodePickerState internal constructor(
     }
 }
 
+/**
+ * Creates saveable picker state. [initialRecentSelections] accepts ISO 3166-1 alpha-2 codes;
+ * matching is case-insensitive and unknown codes are ignored.
+ */
 @Composable
 fun rememberCountryCodePickerState(
     initialCountry: CountryCode = CountryCodeCatalog.findByIsoCode("US")
         ?: CountryCodeCatalog.countries.first(),
-    initialRecentSelections: List<CountryCode> = emptyList(),
+    initialRecentSelections: List<String> = emptyList(),
 ): CountryCodePickerState {
     val isoCode = initialCountry.isoCode
-    val initialRecentsKey = initialRecentSelections.joinToString(",") { it.isoCode.uppercase() }
+    val initialRecentsKey = initialRecentSelections.joinToString(",") { it.trim().uppercase() }
+    val initialRecentCountries = remember(initialRecentsKey) {
+        initialRecentSelections.mapNotNull { CountryCodeCatalog.findByIsoCode(it.trim()) }
+    }
     return rememberSaveable(isoCode, initialRecentsKey, saver = androidx.compose.runtime.saveable.Saver(
         save = {
             listOf(
@@ -65,17 +73,14 @@ fun rememberCountryCodePickerState(
         },
         restore = { values ->
             val restoredCountry = CountryCodeCatalog.findByIsoCode(values[0]) ?: initialCountry
-            val initialCountriesByIso = initialRecentSelections.associateBy { it.isoCode.uppercase() }
             val restoredRecents = values.getOrElse(3) { "" }
                 .split(',')
                 .filter(String::isNotBlank)
-                .mapNotNull { code ->
-                    initialCountriesByIso[code.uppercase()] ?: CountryCodeCatalog.findByIsoCode(code)
-                }
+                .mapNotNull(CountryCodeCatalog::findByIsoCode)
             CountryCodePickerState(restoredCountry, restoredRecents).also { state ->
                 if (values[1].toBoolean()) state.open()
                 state.updateQuery(values[2])
             }
         },
-    )) { CountryCodePickerState(initialCountry, initialRecentSelections) }
+    )) { CountryCodePickerState(initialCountry, initialRecentCountries) }
 }

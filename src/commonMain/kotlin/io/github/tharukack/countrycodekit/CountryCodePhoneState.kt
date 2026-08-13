@@ -98,6 +98,10 @@ class CountryCodePhoneState internal constructor(
     }
 }
 
+/**
+ * Creates the unified phone and picker state. [initialRecentSelections] accepts ISO 3166-1
+ * alpha-2 codes; matching is case-insensitive and unknown codes are ignored.
+ */
 @Composable
 fun rememberCountryCodePhoneState(
     initialCountry: CountryCode = CountryCodeCatalog.findByIsoCode("US")
@@ -107,7 +111,7 @@ fun rememberCountryCodePhoneState(
     processing: CountryCodePhoneProcessing = CountryCodePhoneProcessing.ValidateAndDetectCountry,
     validationPreset: CountryCodePhoneValidationPreset = CountryCodePhoneValidationPreset.PhoneNumber,
     pickerConfig: CountryCodePickerConfig = CountryCodePickerConfig(),
-    initialRecentSelections: List<CountryCode> = emptyList(),
+    initialRecentSelections: List<String> = emptyList(),
 ): CountryCodePhoneState {
     val pickerState = rememberCountryCodePickerState(initialCountry, initialRecentSelections)
     var savedRawNumber by rememberSaveable {

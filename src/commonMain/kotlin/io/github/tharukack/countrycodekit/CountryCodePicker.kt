@@ -2,6 +2,7 @@ package io.github.tharukack.countrycodekit
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,11 +17,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.selection.selectable
@@ -56,6 +59,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -110,14 +114,14 @@ fun CountryCodePicker(
                 chevron = config.trigger.colors.chevron.orElse(triggerContentColor),
             ),
         ),
-        list = config.list.copy(
-            colors = config.list.colors.copy(
-                content = config.list.colors.content.orElse(MaterialTheme.colorScheme.onSurface),
-                secondaryContent = config.list.colors.secondaryContent.orElse(
+        countryList = config.countryList.copy(
+            colors = config.countryList.colors.copy(
+                content = config.countryList.colors.content.orElse(MaterialTheme.colorScheme.onSurface),
+                secondaryContent = config.countryList.colors.secondaryContent.orElse(
                     MaterialTheme.colorScheme.onSurfaceVariant,
                 ),
-                selectedContent = config.list.colors.selectedContent.orElse(
-                    config.list.colors.content.orElse(MaterialTheme.colorScheme.onSurface),
+                selectedContent = config.countryList.colors.selectedContent.orElse(
+                    config.countryList.colors.content.orElse(MaterialTheme.colorScheme.onSurface),
                 ),
             ),
         ),
@@ -126,7 +130,7 @@ fun CountryCodePicker(
         CountryCodeFlag(it, style = resolvedConfig.trigger.flagStyle)
     }
     val listFlagContent: @Composable (CountryCode) -> Unit = flagContent ?: {
-        CountryCodeFlag(it, style = resolvedConfig.list.flagStyle)
+        CountryCodeFlag(it, style = resolvedConfig.countryList.flagStyle)
     }
     val countries = remember(config.countryFilter) {
         val requestedIsoCodes = when (val filter = config.countryFilter) {
@@ -182,7 +186,7 @@ fun CountryCodePicker(
             if (CountryCodePickerTriggerElement.Chevron in resolvedConfig.trigger.triggerElements) {
                 Icon(
                     TightChevronDown,
-                    contentDescription = config.list.strings.title,
+                    contentDescription = config.countryList.strings.title,
                     modifier = Modifier
                         .size(resolvedConfig.trigger.chevronSize)
                         .offset(y = 2.dp),
@@ -213,57 +217,43 @@ private fun CountryCodePickerStyledContainer(
     flagContent: @Composable (CountryCode) -> Unit,
 ) {
     when (config.style) {
-        CountryCodePickerStyle.BottomSheet -> ModalBottomSheet(
-            onDismissRequest = state::dismiss,
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-            sheetGesturesEnabled = config.sheetGesturesEnabled,
-            containerColor = config.list.colors.sheetContainer,
-            scrimColor = config.list.colors.scrim,
-            shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-            tonalElevation = 0.dp,
-            dragHandle = {
-                Surface(
-                    modifier = Modifier.padding(top = 10.dp).width(40.dp).height(4.dp),
-                    shape = RoundedCornerShape(100.dp),
-                    color = config.list.colors.divider,
-                ) {}
-            },
-        ) {
-            PickerContent(
-                state = state,
-                config = config,
-                countries = countries,
-                flagContent = flagContent,
+        CountryCodePickerStyle.BottomSheet -> {
+            val style = config.bottomSheet
+            ModalBottomSheet(
+                onDismissRequest = state::dismiss,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(config.sheetHeightFraction.coerceIn(0.5f, 1f))
-                    .imePadding(),
-            )
-        }
-
-        CountryCodePickerStyle.Dialog -> Dialog(onDismissRequest = state::dismiss) {
-            Surface(
-                shape = RoundedCornerShape(28.dp),
-                color = config.list.colors.sheetContainer,
-                tonalElevation = 0.dp,
-            ) {
-                PickerContent(
-                    state = state,
-                    config = config,
-                    countries = countries,
-                    flagContent = flagContent,
-                    modifier = Modifier.fillMaxWidth().height(620.dp),
-                )
-            }
-        }
-
-        CountryCodePickerStyle.FullScreen -> Dialog(
-            onDismissRequest = state::dismiss,
-            properties = DialogProperties(usePlatformDefaultWidth = false),
-        ) {
-            Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = config.list.colors.sheetContainer,
+                    .widthConstraints(style.minWidth, style.maxWidth)
+                    .then(
+                        if (style.borderWidth > 0.dp) {
+                            Modifier.border(
+                                style.borderWidth,
+                                config.countryList.colors.containerBorder,
+                                style.shape,
+                            )
+                        } else {
+                            Modifier
+                        },
+                    ),
+                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+                sheetGesturesEnabled = style.gesturesEnabled,
+                containerColor = config.countryList.colors.sheetContainer,
+                scrimColor = config.countryList.colors.scrim,
+                shape = style.shape,
+                tonalElevation = style.tonalElevation,
+                dragHandle = if (style.showDragHandle) {
+                    {
+                        Surface(
+                            modifier = Modifier
+                                .padding(top = style.dragHandleTopPadding)
+                                .width(style.dragHandleWidth)
+                                .height(style.dragHandleHeight),
+                            shape = style.dragHandleShape,
+                            color = config.countryList.colors.divider,
+                        ) {}
+                    }
+                } else {
+                    null
+                },
             ) {
                 PickerContent(
                     state = state,
@@ -271,13 +261,97 @@ private fun CountryCodePickerStyledContainer(
                     countries = countries,
                     flagContent = flagContent,
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(WindowInsets.statusBars.asPaddingValues()),
+                        .fillMaxWidth()
+                        .fillMaxHeight(style.heightFraction)
+                        .imePadding(),
                 )
+            }
+        }
+
+        CountryCodePickerStyle.Dialog -> {
+            val style = config.dialog
+            Dialog(
+                onDismissRequest = state::dismiss,
+                properties = DialogProperties(
+                    dismissOnBackPress = style.dismissOnBackPress,
+                    dismissOnClickOutside = style.dismissOnClickOutside,
+                ),
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .widthConstraints(style.minWidth, style.maxWidth)
+                        .height(style.height),
+                    shape = style.shape,
+                    color = config.countryList.colors.sheetContainer,
+                    border = style.borderWidth.takeIf { it > 0.dp }?.let {
+                        BorderStroke(it, config.countryList.colors.containerBorder)
+                    },
+                    tonalElevation = style.tonalElevation,
+                    shadowElevation = style.shadowElevation,
+                ) {
+                    PickerContent(
+                        state = state,
+                        config = config,
+                        countries = countries,
+                        flagContent = flagContent,
+                        modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                    )
+                }
+            }
+        }
+
+        CountryCodePickerStyle.FullScreen -> {
+            val style = config.fullScreen
+            Dialog(
+                onDismissRequest = state::dismiss,
+                properties = DialogProperties(
+                    dismissOnBackPress = style.dismissOnBackPress,
+                    dismissOnClickOutside = false,
+                    usePlatformDefaultWidth = false,
+                ),
+            ) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = config.countryList.colors.sheetContainer,
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.TopCenter,
+                    ) {
+                        var contentModifier = Modifier
+                            .widthConstraints(style.contentMinWidth, style.contentMaxWidth)
+                            .fillMaxSize()
+                        if (style.useStatusBarPadding) {
+                            contentModifier = contentModifier.padding(
+                                WindowInsets.statusBars.asPaddingValues(),
+                            )
+                        }
+                        if (style.useNavigationBarPadding) {
+                            contentModifier = contentModifier.padding(
+                                WindowInsets.navigationBars.asPaddingValues(),
+                            )
+                        }
+                        PickerContent(
+                            state = state,
+                            config = config,
+                            countries = countries,
+                            flagContent = flagContent,
+                            modifier = contentModifier,
+                        )
+                    }
+                }
             }
         }
     }
 }
+
+private fun Modifier.widthConstraints(minWidth: Dp?, maxWidth: Dp?): Modifier =
+    when {
+        minWidth != null && maxWidth != null -> widthIn(min = minWidth, max = maxWidth)
+        minWidth != null -> widthIn(min = minWidth)
+        maxWidth != null -> widthIn(max = maxWidth)
+        else -> this
+    }
 
 @Composable
 private fun PickerContent(
@@ -291,16 +365,16 @@ private fun PickerContent(
     val availableIsoCodes = remember(countries) { countries.mapTo(mutableSetOf()) { it.isoCode.uppercase() } }
     val recentCountries = state.recentSelections
         .filter { it.isoCode.uppercase() in availableIsoCodes }
-        .take(config.list.recentSelectionLimit.coerceIn(0, 3))
+        .take(config.countryList.recentSelectionLimit.coerceIn(0, 3))
     val focusRequester = remember { FocusRequester() }
 
-    LaunchedEffect(state.isOpen, config.list.showSearch, config.list.autoFocusSearch) {
-        if (state.isOpen && config.list.showSearch && config.list.autoFocusSearch) focusRequester.requestFocus()
+    LaunchedEffect(state.isOpen, config.countryList.showSearch, config.countryList.autoFocusSearch) {
+        if (state.isOpen && config.countryList.showSearch && config.countryList.autoFocusSearch) focusRequester.requestFocus()
     }
 
     Column(
         modifier = modifier
-            .background(config.list.colors.sheetContainer)
+            .background(config.countryList.colors.sheetContainer)
             .testTag(CountryCodePickerTestTags.Container),
     ) {
         Row(
@@ -308,61 +382,61 @@ private fun PickerContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = config.list.strings.title,
+                text = config.countryList.strings.title,
                 modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.titleLarge.merge(config.list.textStyles.title),
-                color = config.list.colors.content,
+                style = MaterialTheme.typography.titleLarge.merge(config.countryList.textStyles.title),
+                color = config.countryList.colors.content,
             )
             IconButton(onClick = state::dismiss, modifier = Modifier.size(40.dp)) {
                 Icon(
                     Icons.Default.Close,
-                    contentDescription = config.list.strings.close,
+                    contentDescription = config.countryList.strings.close,
                     modifier = Modifier.size(20.dp),
-                    tint = config.list.colors.content,
+                    tint = config.countryList.colors.content,
                 )
             }
         }
 
-        if (config.list.showSearch) {
+        if (config.countryList.showSearch) {
             BasicTextField(
                 value = state.query,
                 onValueChange = state::updateQuery,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 20.dp, end = 20.dp, top = 4.dp, bottom = 8.dp)
-                    .height(config.list.search.height)
-                    .background(config.list.colors.searchContainer, config.list.search.shape)
+                    .height(config.countryList.search.height)
+                    .background(config.countryList.colors.searchContainer, config.countryList.search.shape)
                     .focusRequester(focusRequester)
                     .testTag(CountryCodePickerTestTags.Search),
                 singleLine = true,
                 textStyle = MaterialTheme.typography.bodyMedium
-                    .merge(config.list.textStyles.search)
-                    .copy(color = config.list.colors.content),
-                cursorBrush = SolidColor(config.list.colors.accent),
+                    .merge(config.countryList.textStyles.search)
+                    .copy(color = config.countryList.colors.content),
+                cursorBrush = SolidColor(config.countryList.colors.accent),
                 decorationBox = { innerTextField ->
                     Row(
                         modifier = Modifier.fillMaxSize().padding(
-                            start = config.list.search.horizontalPadding,
-                            end = config.list.search.horizontalPadding,
+                            start = config.countryList.search.horizontalPadding,
+                            end = config.countryList.search.horizontalPadding,
                         ),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
                             Icons.Default.Search,
                             contentDescription = null,
-                            modifier = Modifier.size(config.list.search.iconSize),
-                            tint = config.list.colors.secondaryContent,
+                            modifier = Modifier.size(config.countryList.search.iconSize),
+                            tint = config.countryList.colors.secondaryContent,
                         )
-                        Spacer(Modifier.width(config.list.search.iconSpacing))
+                        Spacer(Modifier.width(config.countryList.search.iconSpacing))
                         Box(
                             modifier = Modifier.weight(1f),
                             contentAlignment = Alignment.CenterStart,
                         ) {
                             if (state.query.isEmpty()) {
                                 Text(
-                                    text = config.list.strings.searchPlaceholder,
-                                    style = MaterialTheme.typography.bodyMedium.merge(config.list.textStyles.search),
-                                    color = config.list.colors.secondaryContent,
+                                    text = config.countryList.strings.searchPlaceholder,
+                                    style = MaterialTheme.typography.bodyMedium.merge(config.countryList.textStyles.search),
+                                    color = config.countryList.colors.secondaryContent,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                 )
@@ -372,13 +446,13 @@ private fun PickerContent(
                         if (state.query.isNotEmpty()) {
                             IconButton(
                                 onClick = { state.updateQuery("") },
-                                modifier = Modifier.size(config.list.search.clearButtonSize),
+                                modifier = Modifier.size(config.countryList.search.clearButtonSize),
                             ) {
                                 Icon(
                                     Icons.Default.Clear,
-                                    contentDescription = config.list.strings.clearSearch,
-                                    modifier = Modifier.size(config.list.search.clearIconSize),
-                                    tint = config.list.colors.secondaryContent,
+                                    contentDescription = config.countryList.strings.clearSearch,
+                                    modifier = Modifier.size(config.countryList.search.clearIconSize),
+                                    tint = config.countryList.colors.secondaryContent,
                                 )
                             }
                         }
@@ -395,9 +469,9 @@ private fun PickerContent(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    config.list.strings.noResults,
-                    color = config.list.colors.secondaryContent,
-                    style = MaterialTheme.typography.bodyLarge.merge(config.list.textStyles.emptyState),
+                    config.countryList.strings.noResults,
+                    color = config.countryList.colors.secondaryContent,
+                    style = MaterialTheme.typography.bodyLarge.merge(config.countryList.textStyles.emptyState),
                 )
             }
         } else {
@@ -422,10 +496,10 @@ private fun CountryList(
 ) {
     val browsing = state.query.isBlank()
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        if (browsing && config.list.showRecentSelections && recentCountries.isNotEmpty()) {
+        if (browsing && config.countryList.showRecentSelections && recentCountries.isNotEmpty()) {
             item(key = "recent-header") {
                 SectionLabel(
-                    text = config.list.strings.recent,
+                    text = config.countryList.strings.recent,
                     tag = CountryCodePickerTestTags.RecentSection,
                     config = config,
                 )
@@ -434,7 +508,7 @@ private fun CountryList(
                 RecentCountryCards(
                     countries = recentCountries,
                     selectedIsoCode = state.selectedCountry.isoCode,
-                    showCallingCode = config.list.showCallingCode,
+                    showCallingCode = config.countryList.showCallingCode,
                     config = config,
                     flagContent = flagContent,
                     onSelect = state::select,
@@ -444,13 +518,13 @@ private fun CountryList(
 
         item(key = if (browsing) "all-header" else "results-header") {
             SectionLabel(
-                text = if (browsing) config.list.strings.allCountries else config.list.strings.searchResults,
+                text = if (browsing) config.countryList.strings.allCountries else config.countryList.strings.searchResults,
                 tag = CountryCodePickerTestTags.AllCountriesSection,
                 config = config,
             )
         }
 
-        if (browsing && config.list.separateCountriesByLetter) {
+        if (browsing && config.countryList.separateCountriesByLetter) {
             results.groupBy(::countrySection).forEach { (letter, sectionCountries) ->
                 item(key = "letter-$letter") {
                     LetterLabel(letter = letter, config = config)
@@ -466,7 +540,7 @@ private fun CountryList(
                             .getOrNull(index + 1)
                             ?.isoCode
                             .equals(state.selectedCountry.isoCode, ignoreCase = true),
-                        showCallingCode = config.list.showCallingCode,
+                        showCallingCode = config.countryList.showCallingCode,
                         config = config,
                         flagContent = flagContent,
                         testTag = CountryCodePickerTestTags.country(country.isoCode),
@@ -486,7 +560,7 @@ private fun CountryList(
                         .getOrNull(index + 1)
                         ?.isoCode
                         .equals(state.selectedCountry.isoCode, ignoreCase = true),
-                    showCallingCode = config.list.showCallingCode,
+                    showCallingCode = config.countryList.showCallingCode,
                     config = config,
                     flagContent = flagContent,
                     testTag = CountryCodePickerTestTags.country(country.isoCode),
@@ -510,8 +584,8 @@ private fun SectionLabel(
             .fillMaxWidth()
             .testTag(tag)
             .padding(horizontal = 20.dp, vertical = 7.dp),
-        style = MaterialTheme.typography.titleSmall.merge(config.list.textStyles.sectionTitle),
-        color = config.list.colors.content,
+        style = MaterialTheme.typography.titleSmall.merge(config.countryList.textStyles.sectionTitle),
+        color = config.countryList.colors.content,
     )
 }
 
@@ -527,7 +601,7 @@ private fun RecentCountryCards(
     val useCompactCards = countries.size > 1
     Row(
         modifier = Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp, bottom = 5.dp),
-        horizontalArrangement = Arrangement.spacedBy(config.list.selection.recentCardSpacing),
+        horizontalArrangement = Arrangement.spacedBy(config.countryList.selection.recentCardSpacing),
     ) {
         countries.forEach { country ->
             val selected = country.isoCode.equals(selectedIsoCode, ignoreCase = true)
@@ -537,12 +611,12 @@ private fun RecentCountryCards(
                     .height(if (useCompactCards) 56.dp else 44.dp)
                     .selectable(selected = selected, role = Role.RadioButton) { onSelect(country) }
                     .testTag(CountryCodePickerTestTags.recentCountry(country.isoCode)),
-                shape = config.list.selection.recentCardShape,
-                color = if (selected) config.list.colors.selectedContainer else config.list.colors.sheetContainer,
-                border = config.list.selection.recentCardBorderWidth.takeIf { it > 0.dp }?.let {
+                shape = config.countryList.selection.recentCardShape,
+                color = if (selected) config.countryList.colors.selectedContainer else config.countryList.colors.sheetContainer,
+                border = config.countryList.selection.recentCardBorderWidth.takeIf { it > 0.dp }?.let {
                     BorderStroke(
                         it,
-                        if (selected) config.list.colors.accentStrong.copy(alpha = 0.35f) else config.list.colors.divider,
+                        if (selected) config.countryList.colors.accentStrong.copy(alpha = 0.35f) else config.countryList.colors.divider,
                     )
                 },
                 tonalElevation = 0.dp,
@@ -554,8 +628,8 @@ private fun RecentCountryCards(
                             .fillMaxWidth()
                             .weight(1f)
                             .padding(
-                                start = config.list.selection.recentContentPadding,
-                                end = config.list.selection.recentContentPadding,
+                                start = config.countryList.selection.recentContentPadding,
+                                end = config.countryList.selection.recentContentPadding,
                                 top = 4.dp,
                             ),
                         verticalAlignment = Alignment.CenterVertically,
@@ -570,14 +644,14 @@ private fun RecentCountryCards(
                                     overflow = TextOverflow.Ellipsis,
                                     style = MaterialTheme.typography.bodySmall
                                         .copy(fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium)
-                                        .merge(config.list.textStyles.countryName),
-                                    color = if (selected) config.list.colors.selectedContent else config.list.colors.content,
+                                        .merge(config.countryList.textStyles.countryName),
+                                    color = if (selected) config.countryList.colors.selectedContent else config.countryList.colors.content,
                                 )
                                 if (showCallingCode) {
                                     Text(
                                         text = country.formattedCallingCode,
-                                        style = MaterialTheme.typography.labelSmall.merge(config.list.textStyles.callingCode),
-                                        color = config.list.colors.accentStrong,
+                                        style = MaterialTheme.typography.labelSmall.merge(config.countryList.textStyles.callingCode),
+                                        color = config.countryList.colors.accentStrong,
                                     )
                                 }
                             }
@@ -589,14 +663,14 @@ private fun RecentCountryCards(
                                 overflow = TextOverflow.Ellipsis,
                                 style = MaterialTheme.typography.bodySmall
                                     .copy(fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium)
-                                    .merge(config.list.textStyles.countryName),
-                                color = if (selected) config.list.colors.selectedContent else config.list.colors.content,
+                                    .merge(config.countryList.textStyles.countryName),
+                                color = if (selected) config.countryList.colors.selectedContent else config.countryList.colors.content,
                             )
                             if (showCallingCode) {
                                 Text(
                                     text = country.formattedCallingCode,
-                                    style = MaterialTheme.typography.labelMedium.merge(config.list.textStyles.callingCode),
-                                    color = config.list.colors.accentStrong,
+                                    style = MaterialTheme.typography.labelMedium.merge(config.countryList.textStyles.callingCode),
+                                    color = config.countryList.colors.accentStrong,
                                 )
                             }
                         }
@@ -604,8 +678,8 @@ private fun RecentCountryCards(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(config.list.selection.recentIndicatorHeight)
-                            .background(if (selected) config.list.colors.accentStrong else Color.Transparent),
+                            .height(config.countryList.selection.recentIndicatorHeight)
+                            .background(if (selected) config.countryList.colors.accentStrong else Color.Transparent),
                     )
                 }
             }
@@ -622,11 +696,11 @@ private fun LetterLabel(
         text = letter,
         modifier = Modifier
             .fillMaxWidth()
-            .background(config.list.colors.sheetContainer)
+            .background(config.countryList.colors.sheetContainer)
             .testTag(CountryCodePickerTestTags.letter(letter))
             .padding(start = 20.dp, end = 20.dp, top = 6.dp, bottom = 5.dp),
-        style = MaterialTheme.typography.titleMedium.merge(config.list.textStyles.letterHeader),
-        color = config.list.colors.content,
+        style = MaterialTheme.typography.titleMedium.merge(config.countryList.textStyles.letterHeader),
+        color = config.countryList.colors.content,
     )
 }
 
@@ -648,15 +722,15 @@ private fun CountryRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    horizontal = if (selected) config.list.selection.rowHorizontalInset else 0.dp,
-                    vertical = if (selected) config.list.selection.rowVerticalInset else 1.dp,
+                    horizontal = if (selected) config.countryList.selection.rowHorizontalInset else 0.dp,
+                    vertical = if (selected) config.countryList.selection.rowVerticalInset else 1.dp,
                 )
                 .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
                 .testTag(testTag),
-            shape = if (selected) config.list.selection.rowShape else RectangleShape,
-            color = if (selected) config.list.colors.selectedContainer else config.list.colors.sheetContainer,
-            border = if (selected && config.list.selection.rowBorderWidth > 0.dp) {
-                BorderStroke(config.list.selection.rowBorderWidth, config.list.colors.accentStrong)
+            shape = if (selected) config.countryList.selection.rowShape else RectangleShape,
+            color = if (selected) config.countryList.colors.selectedContainer else config.countryList.colors.sheetContainer,
+            border = if (selected && config.countryList.selection.rowBorderWidth > 0.dp) {
+                BorderStroke(config.countryList.selection.rowBorderWidth, config.countryList.colors.accentStrong)
             } else {
                 null
             },
@@ -668,8 +742,8 @@ private fun CountryRow(
                     .fillMaxWidth()
                     .heightIn(min = 44.dp)
                     .padding(
-                        start = if (selected) config.list.selection.rowContentStartPadding else 20.dp,
-                        end = if (selected) config.list.selection.rowContentEndPadding else 16.dp,
+                        start = if (selected) config.countryList.selection.rowContentStartPadding else 20.dp,
+                        end = if (selected) config.countryList.selection.rowContentEndPadding else 16.dp,
                     ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -682,14 +756,14 @@ private fun CountryRow(
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodyMedium
                         .copy(fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium)
-                        .merge(config.list.textStyles.countryName),
-                    color = if (selected) config.list.colors.selectedContent else config.list.colors.content,
+                        .merge(config.countryList.textStyles.countryName),
+                    color = if (selected) config.countryList.colors.selectedContent else config.countryList.colors.content,
                 )
                 if (showCallingCode) {
                     Text(
                         text = country.formattedCallingCode,
-                        style = MaterialTheme.typography.bodyMedium.merge(config.list.textStyles.callingCode),
-                        color = config.list.colors.accentStrong,
+                        style = MaterialTheme.typography.bodyMedium.merge(config.countryList.textStyles.callingCode),
+                        color = config.countryList.colors.accentStrong,
                     )
                 }
                 Box(
@@ -700,8 +774,8 @@ private fun CountryRow(
                         Icon(
                             imageVector = Icons.Default.CheckCircle,
                             contentDescription = null,
-                            modifier = Modifier.size(config.list.selection.indicatorSize),
-                            tint = config.list.colors.accentStrong,
+                            modifier = Modifier.size(config.countryList.selection.indicatorSize),
+                            tint = config.countryList.colors.accentStrong,
                         )
                     }
                 }
@@ -711,7 +785,7 @@ private fun CountryRow(
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 thickness = 0.5.dp,
-                color = config.list.colors.divider,
+                color = config.countryList.colors.divider,
             )
         }
     }

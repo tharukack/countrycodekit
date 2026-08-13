@@ -67,8 +67,12 @@ import io.github.tharukack.countrycodekit.CountryCodePhoneResult
 import io.github.tharukack.countrycodekit.CountryCodePhoneProcessing
 import io.github.tharukack.countrycodekit.CountryCodePhoneStatus
 import io.github.tharukack.countrycodekit.CountryCodePicker
+import io.github.tharukack.countrycodekit.CountryCodePickerBottomSheetConfig
 import io.github.tharukack.countrycodekit.CountryCodePickerConfig
-import io.github.tharukack.countrycodekit.CountryCodePickerListConfig
+import io.github.tharukack.countrycodekit.CountryCodePickerDialogConfig
+import io.github.tharukack.countrycodekit.CountryCodePickerFullScreenConfig
+import io.github.tharukack.countrycodekit.CountryCodePickerCountryListColors
+import io.github.tharukack.countrycodekit.CountryCodePickerCountryListConfig
 import io.github.tharukack.countrycodekit.CountryCodePickerSearchConfig
 import io.github.tharukack.countrycodekit.CountryCodePickerSelectionConfig
 import io.github.tharukack.countrycodekit.CountryCodePickerStyle
@@ -355,6 +359,14 @@ private fun PickerStylePage() {
     var searchCornerRadius by rememberSaveable { mutableStateOf(14) }
     var selectionCornerRadius by rememberSaveable { mutableStateOf(10) }
     var selectionBorderWidth by rememberSaveable { mutableStateOf(1) }
+    var presentationCornerRadius by rememberSaveable { mutableStateOf(28) }
+    var presentationBorderWidth by rememberSaveable { mutableStateOf(0) }
+    var presentationElevation by rememberSaveable { mutableStateOf(0) }
+    var presentationMaxWidth by rememberSaveable { mutableStateOf(0) }
+    var showDragHandle by rememberSaveable { mutableStateOf(true) }
+    var dialogHeight by rememberSaveable { mutableStateOf(620) }
+    var useStatusBarPadding by rememberSaveable { mutableStateOf(true) }
+    var useNavigationBarPadding by rememberSaveable { mutableStateOf(false) }
 
     val triggerShape: Shape = if (usePillShape) CircleShape else when (cornerRadius) {
         0 -> RectangleShape
@@ -383,6 +395,29 @@ private fun PickerStylePage() {
     )
     val config = CountryCodePickerConfig(
         style = pickerStyle,
+        bottomSheet = CountryCodePickerBottomSheetConfig(
+            shape = RoundedCornerShape(
+                topStart = presentationCornerRadius.dp,
+                topEnd = presentationCornerRadius.dp,
+            ),
+            showDragHandle = showDragHandle,
+            borderWidth = presentationBorderWidth.dp,
+            tonalElevation = presentationElevation.dp,
+            maxWidth = presentationMaxWidth.takeIf { it > 0 }?.dp,
+        ),
+        dialog = CountryCodePickerDialogConfig(
+            height = dialogHeight.dp,
+            shape = pickerShape(presentationCornerRadius),
+            borderWidth = presentationBorderWidth.dp,
+            tonalElevation = presentationElevation.dp,
+            shadowElevation = presentationElevation.dp,
+            maxWidth = presentationMaxWidth.takeIf { it > 0 }?.dp,
+        ),
+        fullScreen = CountryCodePickerFullScreenConfig(
+            contentMaxWidth = presentationMaxWidth.takeIf { it > 0 }?.dp,
+            useStatusBarPadding = useStatusBarPadding,
+            useNavigationBarPadding = useNavigationBarPadding,
+        ),
         trigger = CountryCodePickerTriggerConfig(
             triggerElements = elements,
             flagStyle = if (circularTriggerFlag) CountryCodeFlagStyle.Circle else CountryCodeFlagStyle.Rounded,
@@ -399,7 +434,7 @@ private fun PickerStylePage() {
             chevronSize = chevronSize.dp,
             colors = triggerColors,
         ),
-        list = CountryCodePickerListConfig(
+        countryList = CountryCodePickerCountryListConfig(
             flagStyle = if (circularListFlags) CountryCodeFlagStyle.Circle else CountryCodeFlagStyle.Rounded,
             search = CountryCodePickerSearchConfig(
                 shape = pickerShape(searchCornerRadius),
@@ -409,6 +444,7 @@ private fun PickerStylePage() {
                 rowBorderWidth = selectionBorderWidth.dp,
                 recentCardShape = pickerShape(selectionCornerRadius),
             ),
+            colors = CountryCodePickerCountryListColors(containerBorder = Line),
         ),
     )
 
@@ -595,6 +631,65 @@ private fun PickerStylePage() {
                 }
             }
 
+            if (pickerStyle != CountryCodePickerStyle.FullScreen) {
+                StyleControlCard(title = "Container corners", supporting = "Changes the sheet top corners or all dialog corners.") {
+                    listOf(0, 16, 28, 36).forEach { radius ->
+                        FilterChip(
+                            selected = presentationCornerRadius == radius,
+                            onClick = { presentationCornerRadius = radius },
+                            label = { Text(if (radius == 0) "Square" else "$radius dp") },
+                            colors = sampleChipColors(),
+                        )
+                    }
+                }
+
+                StyleControlCard(title = "Container border", supporting = "Adds an outer border around the active presentation.") {
+                    listOf(0, 1, 2).forEach { width ->
+                        FilterChip(
+                            selected = presentationBorderWidth == width,
+                            onClick = { presentationBorderWidth = width },
+                            label = { Text(if (width == 0) "None" else "$width dp") },
+                            colors = sampleChipColors(),
+                        )
+                    }
+                }
+
+                StyleControlCard(title = "Container elevation", supporting = "Adjusts tonal elevation and dialog shadow.") {
+                    listOf(0, 2, 6).forEach { elevation ->
+                        FilterChip(
+                            selected = presentationElevation == elevation,
+                            onClick = { presentationElevation = elevation },
+                            label = { Text("$elevation dp") },
+                            colors = sampleChipColors(),
+                        )
+                    }
+                }
+            }
+
+            StyleControlCard(title = "Presentation width", supporting = "Keep platform width or constrain the sheet, dialog, or full-screen content.") {
+                listOf(0 to "Platform", 360 to "360 dp", 420 to "420 dp").forEach { (width, label) ->
+                    FilterChip(
+                        selected = presentationMaxWidth == width,
+                        onClick = { presentationMaxWidth = width },
+                        label = { Text(label) },
+                        colors = sampleChipColors(),
+                    )
+                }
+            }
+
+            if (pickerStyle == CountryCodePickerStyle.Dialog) {
+                StyleControlCard(title = "Dialog height", supporting = "Set the dialog content height independently from its width.") {
+                    listOf(480, 620, 720).forEach { height ->
+                        FilterChip(
+                            selected = dialogHeight == height,
+                            onClick = { dialogHeight = height },
+                            label = { Text("$height dp") },
+                            colors = sampleChipColors(),
+                        )
+                    }
+                }
+            }
+
             Card(
                 modifier = Modifier.fillMaxWidth().border(1.dp, Line, RoundedCornerShape(20.dp)),
                 shape = RoundedCornerShape(20.dp),
@@ -629,6 +724,31 @@ private fun PickerStylePage() {
                                 colors = sampleChipColors(),
                             )
                         }
+                    }
+                    if (pickerStyle == CountryCodePickerStyle.BottomSheet) {
+                        HorizontalDivider(color = Line)
+                        SettingRow(
+                            title = "Drag handle",
+                            supporting = "Show or hide the bottom-sheet drag handle.",
+                            checked = showDragHandle,
+                            onCheckedChange = { showDragHandle = it },
+                        )
+                    }
+                    if (pickerStyle == CountryCodePickerStyle.FullScreen) {
+                        HorizontalDivider(color = Line)
+                        SettingRow(
+                            title = "Status bar padding",
+                            supporting = "Keep content below the status bar.",
+                            checked = useStatusBarPadding,
+                            onCheckedChange = { useStatusBarPadding = it },
+                        )
+                        HorizontalDivider(color = Line)
+                        SettingRow(
+                            title = "Navigation bar padding",
+                            supporting = "Keep content above the navigation area.",
+                            checked = useNavigationBarPadding,
+                            onCheckedChange = { useNavigationBarPadding = it },
+                        )
                     }
                 }
             }

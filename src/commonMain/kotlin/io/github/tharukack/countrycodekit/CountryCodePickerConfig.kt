@@ -45,7 +45,7 @@ data class CountryCodePickerStrings(
 )
 
 @Immutable
-data class CountryCodePickerListColors(
+data class CountryCodePickerCountryListColors(
     val accent: Color = Color(0xFF46BD99),
     val accentStrong: Color = Color(0xFF2F987A),
     val sheetContainer: Color = Color(0xFFFFFFFF),
@@ -55,6 +55,7 @@ data class CountryCodePickerListColors(
     val content: Color = Color.Unspecified,
     val secondaryContent: Color = Color.Unspecified,
     val divider: Color = Color(0xFFE3E9E7),
+    val containerBorder: Color = Color.Transparent,
     val scrim: Color = Color(0x52000000),
 )
 
@@ -101,7 +102,7 @@ data class CountryCodePickerTriggerConfig(
 }
 
 @Immutable
-data class CountryCodePickerListTextStyles(
+data class CountryCodePickerCountryListTextStyles(
     val title: TextStyle = TextStyle(fontWeight = FontWeight.Bold),
     val search: TextStyle = TextStyle.Default,
     val sectionTitle: TextStyle = TextStyle(fontWeight = FontWeight.Bold),
@@ -167,7 +168,7 @@ data class CountryCodePickerSelectionConfig(
 }
 
 @Immutable
-data class CountryCodePickerListConfig(
+data class CountryCodePickerCountryListConfig(
     val showSearch: Boolean = true,
     val showCallingCode: Boolean = true,
     val showRecentSelections: Boolean = true,
@@ -178,19 +179,89 @@ data class CountryCodePickerListConfig(
     val search: CountryCodePickerSearchConfig = CountryCodePickerSearchConfig(),
     val selection: CountryCodePickerSelectionConfig = CountryCodePickerSelectionConfig(),
     val strings: CountryCodePickerStrings = CountryCodePickerStrings(),
-    val textStyles: CountryCodePickerListTextStyles = CountryCodePickerListTextStyles(),
-    val colors: CountryCodePickerListColors = CountryCodePickerListColors(),
+    val textStyles: CountryCodePickerCountryListTextStyles = CountryCodePickerCountryListTextStyles(),
+    val colors: CountryCodePickerCountryListColors = CountryCodePickerCountryListColors(),
 )
+
+@Immutable
+data class CountryCodePickerBottomSheetConfig(
+    val heightFraction: Float = 0.65f,
+    val gesturesEnabled: Boolean = false,
+    val shape: Shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+    val showDragHandle: Boolean = true,
+    val dragHandleWidth: Dp = 40.dp,
+    val dragHandleHeight: Dp = 4.dp,
+    val dragHandleTopPadding: Dp = 10.dp,
+    val dragHandleShape: Shape = RoundedCornerShape(100.dp),
+    val borderWidth: Dp = 0.dp,
+    val tonalElevation: Dp = 0.dp,
+    val minWidth: Dp? = null,
+    val maxWidth: Dp? = null,
+) {
+    init {
+        require(heightFraction in 0.5f..1f) { "Bottom-sheet height fraction must be between 0.5 and 1." }
+        require(dragHandleWidth > 0.dp && dragHandleHeight > 0.dp) {
+            "Bottom-sheet drag-handle dimensions must be greater than zero."
+        }
+        require(dragHandleTopPadding >= 0.dp && borderWidth >= 0.dp && tonalElevation >= 0.dp) {
+            "Bottom-sheet padding, border width, and elevation cannot be negative."
+        }
+        validateWidthRange(minWidth, maxWidth, "Bottom-sheet")
+    }
+}
+
+@Immutable
+data class CountryCodePickerDialogConfig(
+    val height: Dp = 620.dp,
+    val shape: Shape = RoundedCornerShape(28.dp),
+    val borderWidth: Dp = 0.dp,
+    val tonalElevation: Dp = 0.dp,
+    val shadowElevation: Dp = 0.dp,
+    val minWidth: Dp? = null,
+    val maxWidth: Dp? = null,
+    val dismissOnBackPress: Boolean = true,
+    val dismissOnClickOutside: Boolean = true,
+) {
+    init {
+        require(height > 0.dp) { "Dialog height must be greater than zero." }
+        require(borderWidth >= 0.dp && tonalElevation >= 0.dp && shadowElevation >= 0.dp) {
+            "Dialog border width and elevations cannot be negative."
+        }
+        validateWidthRange(minWidth, maxWidth, "Dialog")
+    }
+}
+
+@Immutable
+data class CountryCodePickerFullScreenConfig(
+    val contentMinWidth: Dp? = null,
+    val contentMaxWidth: Dp? = null,
+    val useStatusBarPadding: Boolean = true,
+    val useNavigationBarPadding: Boolean = false,
+    val dismissOnBackPress: Boolean = true,
+) {
+    init {
+        validateWidthRange(contentMinWidth, contentMaxWidth, "Full-screen content")
+    }
+}
 
 @Immutable
 data class CountryCodePickerConfig(
     val style: CountryCodePickerStyle = CountryCodePickerStyle.BottomSheet,
     val countryFilter: CountryCodePickerCountryFilter = CountryCodePickerCountryFilter.All,
     val trigger: CountryCodePickerTriggerConfig = CountryCodePickerTriggerConfig(),
-    val list: CountryCodePickerListConfig = CountryCodePickerListConfig(),
-    val sheetHeightFraction: Float = 0.65f,
-    val sheetGesturesEnabled: Boolean = false,
+    val countryList: CountryCodePickerCountryListConfig = CountryCodePickerCountryListConfig(),
+    val bottomSheet: CountryCodePickerBottomSheetConfig = CountryCodePickerBottomSheetConfig(),
+    val dialog: CountryCodePickerDialogConfig = CountryCodePickerDialogConfig(),
+    val fullScreen: CountryCodePickerFullScreenConfig = CountryCodePickerFullScreenConfig(),
 )
+
+private fun validateWidthRange(minWidth: Dp?, maxWidth: Dp?, label: String) {
+    require(minWidth == null || minWidth > 0.dp) { "$label minimum width must be greater than zero." }
+    require(maxWidth == null || maxWidth > 0.dp) { "$label maximum width must be greater than zero." }
+    require(minWidth == null || maxWidth == null || minWidth <= maxWidth) {
+        "$label minimum width cannot exceed its maximum width."
+    }
+}
 
 internal fun CountryCodePickerCountryFilter.includes(country: CountryCode): Boolean {
     val isoCode = country.isoCode.uppercase()

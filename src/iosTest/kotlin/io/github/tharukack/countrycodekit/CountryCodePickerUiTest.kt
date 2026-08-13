@@ -86,7 +86,7 @@ class CountryCodePickerUiTest {
                             state,
                             config = CountryCodePickerConfig(
                                 style = CountryCodePickerStyle.Dialog,
-                                list = CountryCodePickerListConfig(
+                                countryList = CountryCodePickerCountryListConfig(
                                     separateCountriesByLetter = separate,
                                 ),
                             ),

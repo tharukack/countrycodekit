@@ -6,11 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-08-13
+
+### Library changes
+
 - Increased the default trigger country-code size, tightened the chevron bounds and element spacing, and made its background transparent.
 - Made each trigger padding edge independently configurable, with a `9.dp` default on every side.
 - Added independently configurable circular flag styles for the trigger and country list while retaining rounded flags by default.
 - Matched the default trigger chevron color to the country-code text color.
 - Made primary, selected, secondary, and trigger text colors inherit semantic Material theme colors unless explicitly overridden.
+- Simplified initial recent selections to accept ISO-code strings directly.
+- Added style-specific bottom-sheet, dialog, and full-screen configuration, including sheet shape, drag handle, border, elevation, width constraints, dialog sizing/dismissal, and full-screen inset/content-width controls.
+- Renamed the generic `list` API to the clearer `countryList` configuration, including its colors and text-style types.
+
+### Sample changes
+
 - Simplified the sample home header and clarified default versus app-styled picker integrations.
 
 ## [0.1.0] - 2026-08-12
@@ -48,5 +58,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added exhaustive region metadata, flag coverage, validation, state, alphabetical-section, recents, and Compose UI tests.
 - Rebuilt the README using the same installation, quick-start, customization-table, API guidance, platform-support, and maintenance structure used by GuideKit.
 
-[Unreleased]: https://github.com/tharukack/countrycodekit/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/tharukack/countrycodekit/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/tharukack/countrycodekit/compare/v0.1.0...v1.0.0
 [0.1.0]: https://github.com/tharukack/countrycodekit/releases/tag/v0.1.0
