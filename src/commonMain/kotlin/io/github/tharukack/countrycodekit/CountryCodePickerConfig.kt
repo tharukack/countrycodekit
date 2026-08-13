@@ -51,9 +51,9 @@ data class CountryCodePickerListColors(
     val sheetContainer: Color = Color(0xFFFFFFFF),
     val searchContainer: Color = Color(0xFFF4F6F6),
     val selectedContainer: Color = Color(0xFFEEF8F4),
-    val selectedContent: Color = Color(0xFF132E27),
-    val content: Color = Color(0xFF17243A),
-    val secondaryContent: Color = Color(0xFF7D898D),
+    val selectedContent: Color = Color.Unspecified,
+    val content: Color = Color.Unspecified,
+    val secondaryContent: Color = Color.Unspecified,
     val divider: Color = Color(0xFFE3E9E7),
     val scrim: Color = Color(0x52000000),
 )
@@ -61,8 +61,8 @@ data class CountryCodePickerListColors(
 @Immutable
 data class CountryCodePickerTriggerColors(
     val container: Color = Color.Transparent,
-    val content: Color = Color(0xFF17243A),
-    val chevron: Color = Color(0xFF7D898D),
+    val content: Color = Color.Unspecified,
+    val chevron: Color = Color.Unspecified,
     val border: Color = Color.Transparent,
 )
 

@@ -102,11 +102,31 @@ fun CountryCodePicker(
     enabled: Boolean = true,
     flagContent: (@Composable (CountryCode) -> Unit)? = null,
 ) {
+    val triggerContentColor = config.trigger.colors.content.orElse(MaterialTheme.colorScheme.onSurface)
+    val resolvedConfig = config.copy(
+        trigger = config.trigger.copy(
+            colors = config.trigger.colors.copy(
+                content = triggerContentColor,
+                chevron = config.trigger.colors.chevron.orElse(triggerContentColor),
+            ),
+        ),
+        list = config.list.copy(
+            colors = config.list.colors.copy(
+                content = config.list.colors.content.orElse(MaterialTheme.colorScheme.onSurface),
+                secondaryContent = config.list.colors.secondaryContent.orElse(
+                    MaterialTheme.colorScheme.onSurfaceVariant,
+                ),
+                selectedContent = config.list.colors.selectedContent.orElse(
+                    config.list.colors.content.orElse(MaterialTheme.colorScheme.onSurface),
+                ),
+            ),
+        ),
+    )
     val triggerFlagContent: @Composable (CountryCode) -> Unit = flagContent ?: {
-        CountryCodeFlag(it, style = config.trigger.flagStyle)
+        CountryCodeFlag(it, style = resolvedConfig.trigger.flagStyle)
     }
     val listFlagContent: @Composable (CountryCode) -> Unit = flagContent ?: {
-        CountryCodeFlag(it, style = config.list.flagStyle)
+        CountryCodeFlag(it, style = resolvedConfig.list.flagStyle)
     }
     val countries = remember(config.countryFilter) {
         val requestedIsoCodes = when (val filter = config.countryFilter) {
@@ -129,44 +149,44 @@ fun CountryCodePicker(
         modifier = modifier
             .testTag(CountryCodePickerTestTags.Trigger)
             .clickable(enabled = enabled, role = Role.Button, onClick = state::open),
-        shape = config.trigger.shape,
-        color = config.trigger.colors.container,
-        border = config.trigger.borderWidth.takeIf { it > 0.dp }?.let {
-            BorderStroke(it, config.trigger.colors.border)
+        shape = resolvedConfig.trigger.shape,
+        color = resolvedConfig.trigger.colors.container,
+        border = resolvedConfig.trigger.borderWidth.takeIf { it > 0.dp }?.let {
+            BorderStroke(it, resolvedConfig.trigger.colors.border)
         },
         tonalElevation = 1.dp,
         shadowElevation = 0.dp,
     ) {
         Row(
             modifier = Modifier.padding(
-                start = config.trigger.startPadding,
-                top = config.trigger.topPadding,
-                end = config.trigger.endPadding,
-                bottom = config.trigger.bottomPadding,
+                start = resolvedConfig.trigger.startPadding,
+                top = resolvedConfig.trigger.topPadding,
+                end = resolvedConfig.trigger.endPadding,
+                bottom = resolvedConfig.trigger.bottomPadding,
             ),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(config.trigger.elementSpacing),
+            horizontalArrangement = Arrangement.spacedBy(resolvedConfig.trigger.elementSpacing),
         ) {
-            if (CountryCodePickerTriggerElement.Flag in config.trigger.triggerElements) {
+            if (CountryCodePickerTriggerElement.Flag in resolvedConfig.trigger.triggerElements) {
                 triggerFlagContent(state.selectedCountry)
             }
-            if (CountryCodePickerTriggerElement.CountryCode in config.trigger.triggerElements) {
+            if (CountryCodePickerTriggerElement.CountryCode in resolvedConfig.trigger.triggerElements) {
                 Text(
                     text = state.selectedCountry.formattedCallingCode,
                     style = MaterialTheme.typography.bodyMedium.merge(
-                        config.trigger.countryCodeTextStyle,
+                        resolvedConfig.trigger.countryCodeTextStyle,
                     ),
-                    color = config.trigger.colors.content,
+                    color = resolvedConfig.trigger.colors.content,
                 )
             }
-            if (CountryCodePickerTriggerElement.Chevron in config.trigger.triggerElements) {
+            if (CountryCodePickerTriggerElement.Chevron in resolvedConfig.trigger.triggerElements) {
                 Icon(
                     TightChevronDown,
                     contentDescription = config.list.strings.title,
                     modifier = Modifier
-                        .size(config.trigger.chevronSize)
+                        .size(resolvedConfig.trigger.chevronSize)
                         .offset(y = 2.dp),
-                    tint = config.trigger.colors.chevron,
+                    tint = resolvedConfig.trigger.colors.chevron,
                 )
             }
         }
@@ -175,12 +195,14 @@ fun CountryCodePicker(
     if (state.isOpen) {
         CountryCodePickerStyledContainer(
             state = state,
-            config = config,
+            config = resolvedConfig,
             countries = countries,
             flagContent = listFlagContent,
         )
     }
 }
+
+private fun Color.orElse(fallback: Color): Color = if (this == Color.Unspecified) fallback else this
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

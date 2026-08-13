@@ -230,7 +230,7 @@ val config = CountryCodePickerConfig(
 )
 ```
 
-Every field uses `TextStyle.Default` or a small default weight override, then merges with the host typography. Text colors remain in `CountryCodePickerListColors` so typography and color configuration stay separate.
+Every field uses `TextStyle.Default` or a small default weight override, then merges with the host typography. Primary and selected text default to `MaterialTheme.colorScheme.onSurface`, while secondary text defaults to `onSurfaceVariant`. Explicit values in `CountryCodePickerListColors` override those Material colors.
 
 ### Search box
 
@@ -288,9 +288,9 @@ val config = CountryCodePickerConfig(
             sheetContainer = Color.White,
             searchContainer = Color(0xFFF4F6F6),
             selectedContainer = Color(0xFFEEF8F4),
-            selectedContent = Color(0xFF132E27),
-            content = Color(0xFF17243A),
-            secondaryContent = Color(0xFF7D898D),
+            selectedContent = Color.Unspecified,
+            content = Color.Unspecified,
+            secondaryContent = Color.Unspecified,
             divider = Color(0xFFE3E9E7),
             scrim = Color(0x52000000),
         ),
@@ -305,9 +305,9 @@ val config = CountryCodePickerConfig(
 | `sheetContainer` | `#FFFFFF` | Sheet, dialog, full-screen, and ordinary row background. |
 | `searchContainer` | `#F4F6F6` | Filled search field background. |
 | `selectedContainer` | `#EEF8F4` | Selected-country row background. |
-| `selectedContent` | `#132E27` | Selected-country name. |
-| `content` | `#17243A` | Primary text, icons, and letter labels. |
-| `secondaryContent` | `#7D898D` | Search icons, placeholders, and empty-state text. |
+| `selectedContent` | Material `onSurface` | Selected-country name. |
+| `content` | Material `onSurface` | Primary text, icons, and letter labels. |
+| `secondaryContent` | Material `onSurfaceVariant` | Search icons, placeholders, and empty-state text. |
 | `divider` | `#E3E9E7` | Inset row dividers and the sheet drag handle. |
 | `scrim` | 32% black | Background dimming behind the sheet. |
 
@@ -411,7 +411,7 @@ CountryCodePicker(
             colors = CountryCodePickerTriggerColors(
                 container = Color.White,
                 content = Color(0xFF17243A),
-                chevron = Color(0xFF7D898D),
+                chevron = Color(0xFF17243A),
                 border = Color(0xFFDDE7E3),
             ),
         ),
@@ -419,7 +419,7 @@ CountryCodePicker(
 )
 ```
 
-`countryCodeTextStyle` is merged with the host application's `MaterialTheme.typography.bodyMedium`. This lets the trigger inherit app typography by default while allowing font size, weight, letter spacing, or other text properties to be overridden. The text color remains in `CountryCodePickerTriggerColors.content` so color configuration stays in one clear place.
+`countryCodeTextStyle` is merged with the host application's `MaterialTheme.typography.bodyMedium`. The trigger text defaults to `MaterialTheme.colorScheme.onSurface`, and the chevron follows that resolved text color. Explicit `content` and `chevron` values in `CountryCodePickerTriggerColors` override those defaults independently.
 
 ---
 

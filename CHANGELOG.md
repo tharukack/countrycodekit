@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Increased the default trigger country-code size, tightened the chevron bounds and element spacing, and made its background transparent.
 - Made each trigger padding edge independently configurable, with a `9.dp` default on every side.
 - Added independently configurable circular flag styles for the trigger and country list while retaining rounded flags by default.
+- Matched the default trigger chevron color to the country-code text color.
+- Made primary, selected, secondary, and trigger text colors inherit semantic Material theme colors unless explicitly overridden.
 - Simplified the sample home header and clarified default versus app-styled picker integrations.
 
 ## [0.1.0] - 2026-08-12
