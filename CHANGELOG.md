@@ -6,13 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-### Project and documentation
-
-- Made the release workflow publish the matching changelog section and update existing GitHub releases safely when rerun.
+## [1.1.0] - 2026-08-13
 
 ### Library changes
 
 - Made the three most recent manual country selections shared across picker instances and persisted automatically with native Android and iOS storage, without adding public configuration.
+
+### Project and documentation
+
+- Made the release workflow publish the matching changelog section and update existing GitHub releases safely when rerun.
 
 ## [1.0.0] - 2026-08-13
 
@@ -72,6 +74,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added exhaustive region metadata, flag coverage, validation, state, alphabetical-section, recents, and Compose UI tests.
 - Rebuilt the README using the same installation, quick-start, customization-table, API guidance, platform-support, and maintenance structure used by GuideKit.
 
-[Unreleased]: https://github.com/tharukack/countrycodekit/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/tharukack/countrycodekit/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/tharukack/countrycodekit/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/tharukack/countrycodekit/compare/v0.1.0...v1.0.0
 [0.1.0]: https://github.com/tharukack/countrycodekit/releases/tag/v0.1.0

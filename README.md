@@ -68,7 +68,7 @@ Add CountryCodeKit Compose to the Compose Multiplatform source set where the pic
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.tharukack:countrycodekit:1.0.0")
+            implementation("io.github.tharukack:countrycodekit:1.1.0")
         }
     }
 }
