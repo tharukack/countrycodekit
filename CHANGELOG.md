@@ -18,6 +18,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Simplified initial recent selections to accept ISO-code strings directly.
 - Added style-specific bottom-sheet, dialog, and full-screen configuration, including sheet shape, drag handle, border, elevation, width constraints, dialog sizing/dismissal, and full-screen inset/content-width controls.
 - Renamed the generic `list` API to the clearer `countryList` configuration, including its colors and text-style types.
+- Reorganized the README around a fully customized integration followed by a complete API and customization reference.
+- Added focused, copyable examples before each API customization explanation.
 
 ### Sample changes
 

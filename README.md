@@ -18,7 +18,7 @@
 <p align="center">
   <a href="#installation">Installation</a> ·
   <a href="#quick-start">Quick Start</a> ·
-  <a href="#customization">Customization</a> ·
+  <a href="#api-and-customization-reference">API Reference</a> ·
   <a href="#phone-number-validation">Validation</a> ·
   <a href="#platform-support">Platform Support</a>
 </p>
@@ -38,8 +38,6 @@
 - Bottom-sheet, dialog, and full-screen styles.
 - Android and iOS targets only.
 - No verification service, network request, or external runtime phone-number wrapper.
-
-CountryCodeKit inherits `MaterialTheme.typography` and semantic text colors from the host application. It does not bundle or force a font family.
 
 ---
 
@@ -273,24 +271,85 @@ The `OutlinedTextField` belongs to the application; CountryCodeKit only supplies
 
 `Color.Unspecified` means “use the host Material theme.” This example uses a supported-country filter; use `Unsupported` instead when it is shorter to describe the countries your app must hide. Dialog and full-screen settings are intentionally omitted because the selected style is `BottomSheet`.
 
+### Alternatives Not Shown
+
+The example fully customizes the selected bottom-sheet path and demonstrates the recommended unified phone state. It intentionally leaves out alternatives that replace, disable, or duplicate something already selected:
+
+- `Dialog` and `FullScreen` presentation configuration. Only the configuration matching `style` is used; see [Picker styles and behavior](#picker-styles-and-behavior).
+- An `Unsupported` country filter. It is the mutually exclusive alternative to the demonstrated `Supported` filter; see [Restrict countries](#restrict-countries).
+- Application-owned flag rendering through `flagContent`. It replaces the bundled rounded or circular flags; see [Custom flags](#custom-flags).
+- Lighter phone processing modes: `None`, `Validate`, or `DetectCountry`. The example uses the combined `ValidateAndDetectCountry` mode.
+- Other validation presets: possible length, digits only, digits plus possible length, and custom length; see [Phone Number Validation](#phone-number-validation).
+- Disabling as-you-type formatting, standalone final formatting, or directly using the lower-level validator; see [Phone Number Formatting](#phone-number-formatting).
+- Standard composable controls such as `modifier` and `enabled`, which can be supplied directly to `CountryCodePicker` when required.
+
 ---
 
-## Customization
+## API and Customization Reference
 
-The bottom-sheet example above is intentionally detailed. The sections below explain each group so normal integrations can configure only what they need.
+The bottom-sheet example above is intentionally detailed. This reference explains the public API by responsibility so normal integrations can configure only what they need.
 
-### Customization catalogue
+### API Map
 
 | Area | What you can configure |
 | --- | --- |
+| [Core picker API](#core-picker-api) | Country data, catalog lookup, picker state, and the picker composable. |
 | [Picker styles and behavior](#picker-styles-and-behavior) | Bottom sheet, dialog, full screen, search, recents, sections, and sheet behavior. |
+| [Trigger](#trigger) | Choose its elements, flag style, shape, spacing, typography, and colors. |
+| [Country list](#country-list) | Search, calling codes, recents, sections, flags, strings, text, shapes, and colors. |
 | [Strings](#strings) | Title, search placeholder, section labels, empty state, and accessibility labels. |
 | [Country-list colors](#country-list-colors) | Accent, sheet, search, selection, content, divider, and scrim colors. |
 | [Countries](#restrict-countries) | Provide either supported or unsupported ISO country codes. |
 | [Flags](#custom-flags) | Replace bundled artwork with application-owned flag content. |
-| [Trigger](#trigger) | Choose its elements, flag style, shape, spacing, typography, and colors. |
+| [Phone formatting](#phone-number-formatting) | Unified phone state, raw input, visual formatting, country detection, and final formats. |
+| [Phone validation](#phone-number-validation) | Validation presets, result status, and normalized output. |
+
+### Core picker API
+
+```kotlin
+val pickerState = rememberCountryCodePickerState(
+    initialCountry = CountryCodeCatalog.findByIsoCode("AU")!!,
+    initialRecentSelections = listOf("NZ", "US"),
+)
+
+CountryCodePicker(
+    state = pickerState,
+    modifier = Modifier,
+    enabled = true,
+)
+```
+
+| API | Responsibility |
+| --- | --- |
+| `CountryCode` | Immutable selected-country value containing `isoCode`, `name`, `callingCode`, and `formattedCallingCode`. |
+| `CountryCodeCatalog` | Bundled searchable country catalog with `countries`, `findByIsoCode`, `search`, and `hasBundledFlag`. |
+| `rememberCountryCodePickerState` | Creates saveable selection, open/closed, search-query, and recent-selection state. Initial recents accept ISO-code strings. |
+| `CountryCodePickerState` | Exposes `selectedCountry`, `isOpen`, `query`, and `recentSelections`, plus `open`, `dismiss`, `updateQuery`, and `select`. |
+| `CountryCodePicker` | Renders the trigger and selected presentation using the supplied state and optional configuration. |
+| `CountryCodePickerConfig` | Groups style, filtering, trigger, country-list, and style-specific configuration. |
+| `CountryCodeFlag` | Renders a bundled flag independently when an application needs it outside the picker. |
+
+`CountryCodePicker` requires only `state`. Its optional `modifier` controls placement, `config` controls behavior and appearance, `enabled` controls trigger interaction, and `flagContent` replaces bundled flags in both the trigger and country list.
 
 ### Picker styles and behavior
+
+```kotlin
+val config = CountryCodePickerConfig(
+    style = CountryCodePickerStyle.Dialog,
+    dialog = CountryCodePickerDialogConfig(
+        height = 560.dp,
+        shape = RoundedCornerShape(24.dp),
+        maxWidth = 520.dp,
+        dismissOnBackPress = true,
+        dismissOnClickOutside = true,
+    ),
+)
+
+CountryCodePicker(
+    state = pickerState,
+    config = config,
+)
+```
 
 `BottomSheet` is the default style. `Dialog` presents the same content in a centered container, and `FullScreen` uses the available window. Search matches country names, ISO codes, and calling codes. Recent cards appear only after selections exist or when initial ISO codes are supplied.
 
@@ -306,27 +365,100 @@ The bottom-sheet example above is intentionally detailed. The sections below exp
 
 #### Bottom sheet
 
+```kotlin
+val bottomSheetConfig = CountryCodePickerBottomSheetConfig(
+    heightFraction = 0.65f,
+    gesturesEnabled = false,
+    shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+    showDragHandle = true,
+    maxWidth = 640.dp,
+)
+```
+
 `CountryCodePickerBottomSheetConfig` controls height fraction, sheet gestures, top-corner shape, drag-handle visibility/size/padding/shape, outer-border width, tonal elevation, and optional minimum/maximum width. Its defaults preserve the original `0.65f` height, disabled gestures, 28 dp top corners, 40 × 4 dp handle, zero border/elevation, and platform-managed width.
 
 #### Dialog
+
+```kotlin
+val dialogConfig = CountryCodePickerDialogConfig(
+    height = 560.dp,
+    shape = RoundedCornerShape(24.dp),
+    borderWidth = 1.dp,
+    maxWidth = 520.dp,
+    dismissOnClickOutside = true,
+)
+```
 
 `CountryCodePickerDialogConfig` controls height, shape, outer-border width, tonal and shadow elevation, optional minimum/maximum width, back dismissal, and outside-click dismissal. Its defaults preserve the 620 dp height, 28 dp corners, zero border/elevation, platform-managed width, and standard dismissal behavior.
 
 #### Full screen
 
+```kotlin
+val fullScreenConfig = CountryCodePickerFullScreenConfig(
+    contentMaxWidth = 720.dp,
+    useStatusBarPadding = true,
+    useNavigationBarPadding = true,
+    dismissOnBackPress = true,
+)
+```
+
 `CountryCodePickerFullScreenConfig` controls optional minimum/maximum content width, status-bar padding, navigation-bar padding, and back dismissal. The full-screen surface itself always fills the window; width limits center the picker content inside it, which is useful on tablets. Defaults preserve full-width content with status-bar padding.
+
+### Country List
+
+```kotlin
+val countryListConfig = CountryCodePickerCountryListConfig(
+    showSearch = true,
+    showCallingCode = true,
+    showRecentSelections = true,
+    recentSelectionLimit = 3,
+    separateCountriesByLetter = true,
+    autoFocusSearch = false,
+    flagStyle = CountryCodeFlagStyle.Rounded,
+)
+```
+
+`CountryCodePickerCountryListConfig` owns everything rendered inside the selected presentation: search, calling-code visibility, recent cards, alphabetical sections, search focus, list flag style, strings, text styles, search shape, selection shape, and colors.
 
 Set `separateCountriesByLetter = false` for one continuous list. `showSearch`, `showCallingCode`, and `showRecentSelections` independently control the corresponding list features. `recentSelectionLimit` is constrained to the responsive recent-card capacity of three.
 
-### Strings
+#### Strings
+
+```kotlin
+val strings = CountryCodePickerStrings(
+    title = "Choose a country",
+    searchPlaceholder = "Search name or calling code",
+    recent = "Recently selected",
+    allCountries = "Countries",
+    noResults = "No matching countries",
+)
+```
 
 `CountryCodePickerStrings` contains all user-facing and accessibility copy: `title`, `searchPlaceholder`, `recent`, `allCountries`, `searchResults`, `noResults`, `close`, and `clearSearch`. Replace these values for localization or product language; none are hard-coded outside this object.
 
-### Country-list text styles
+#### Country-list text styles
+
+```kotlin
+val textStyles = CountryCodePickerCountryListTextStyles(
+    title = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold),
+    countryName = TextStyle(fontSize = 15.sp),
+    callingCode = TextStyle(fontWeight = FontWeight.SemiBold),
+)
+```
 
 `CountryCodePickerCountryListTextStyles` provides optional overrides for `title`, `search`, `sectionTitle`, `letterHeader`, `countryName`, `callingCode`, and `emptyState`. Each override merges with the corresponding host `MaterialTheme` typography, so unspecified font properties continue to come from the application. Primary and selected text use `MaterialTheme.colorScheme.onSurface`; secondary text uses `onSurfaceVariant` unless explicit country-list colors are supplied.
 
-### Search box
+#### Search box
+
+```kotlin
+val searchConfig = CountryCodePickerSearchConfig(
+    shape = RoundedCornerShape(16.dp),
+    height = 48.dp,
+    horizontalPadding = 12.dp,
+    iconSize = 19.dp,
+    clearButtonSize = 32.dp,
+)
+```
 
 `CountryCodePickerSearchConfig` controls the search field without replacing its behavior.
 
@@ -340,11 +472,33 @@ Set `separateCountriesByLetter = false` for one continuous list. `showSearch`, `
 | `clearButtonSize` | `32.dp` | Clear-button touch area. |
 | `clearIconSize` | `18.dp` | Clear icon size. |
 
-### Selection boxes
+#### Selection boxes
+
+```kotlin
+val selectionConfig = CountryCodePickerSelectionConfig(
+    rowShape = RoundedCornerShape(10.dp),
+    rowBorderWidth = 1.dp,
+    rowVerticalInset = 2.dp,
+    recentCardShape = RoundedCornerShape(10.dp),
+    recentCardSpacing = 6.dp,
+    recentIndicatorHeight = 3.dp,
+)
+```
 
 `CountryCodePickerSelectionConfig` controls both selected country rows and recent cards. Row options cover shape, border width, horizontal/vertical inset, content padding, and indicator size. Recent-card options cover shape, border width, spacing, content padding, and bottom-indicator height. Their colors remain in `CountryCodePickerCountryListColors`: `selectedContainer`, `selectedContent`, `accentStrong`, and `divider`.
 
-### Country-list colors
+#### Country-list colors
+
+```kotlin
+val countryListColors = CountryCodePickerCountryListColors(
+    accent = Color(0xFF46BD99),
+    accentStrong = Color(0xFF2F987A),
+    sheetContainer = MaterialTheme.colorScheme.surface,
+    content = MaterialTheme.colorScheme.onSurface,
+    secondaryContent = MaterialTheme.colorScheme.onSurfaceVariant,
+    containerBorder = MaterialTheme.colorScheme.outlineVariant,
+)
+```
 
 CountryCodeKit ships with a white country-list surface, soft-neutral search field, accessible mint selection colors, and Material-inherited text colors. All country-list colors belong inside `CountryCodePickerCountryListConfig`.
 
@@ -364,21 +518,54 @@ CountryCodeKit ships with a white country-list surface, soft-neutral search fiel
 
 ### Restrict countries
 
+```kotlin
+val config = CountryCodePickerConfig(
+    countryFilter = CountryCodePickerCountryFilter.Supported(
+        isoCodes = listOf("AU", "NZ", "US"),
+    ),
+)
+```
+
 `countryFilter` accepts exactly one policy. Use `CountryCodePickerCountryFilter.Supported(isoCodes)` to show only those countries, `Unsupported(isoCodes)` to hide those countries, or `All` for the complete catalog. ISO codes are case-insensitive and unknown values are ignored. The same filter is used by automatic phone-number country detection when the shared phone state receives this picker configuration.
 
 ### Custom flags
+
+```kotlin
+CountryCodePicker(
+    state = pickerState,
+    flagContent = { country ->
+        AppFlag(isoCode = country.isoCode)
+    },
+)
+```
 
 `Rounded` flags are the default. Set `flagStyle` to `Circle` independently in the trigger and country-list configurations. Use the composable's `flagContent` slot to replace bundled PNGs in both locations, or use `CountryCodeFlag` as a standalone composable. Custom countries without bundled artwork receive a compact ISO fallback inside the flag area; ordinary country rows never show ISO abbreviations.
 
 ### Trigger
 
+```kotlin
+val triggerConfig = CountryCodePickerTriggerConfig(
+    triggerElements = setOf(
+        CountryCodePickerTriggerElement.Flag,
+        CountryCodePickerTriggerElement.CountryCode,
+    ),
+    flagStyle = CountryCodeFlagStyle.Circle,
+    shape = RoundedCornerShape(14.dp),
+    borderWidth = 1.dp,
+    countryCodeTextStyle = TextStyle(fontSize = 16.sp),
+    chevronSize = 12.dp,
+    elementSpacing = 6.dp,
+    colors = CountryCodePickerTriggerColors(
+        container = Color.Transparent,
+        content = MaterialTheme.colorScheme.onSurface,
+        border = MaterialTheme.colorScheme.outlineVariant,
+    ),
+)
+```
+
 `CountryCodePickerTriggerConfig` controls which elements appear (`Flag`, `CountryCode`, and `Chevron`), flag style, shape, border width, country-code text style, chevron size, four independent padding edges, and spacing between elements. Its `colors` object controls the container, text, chevron, and border. The container and border are transparent by default. Trigger typography merges with `MaterialTheme.typography.bodyMedium`; text defaults to `onSurface`, and the chevron follows the resolved text color unless separately overridden.
 
----
-
-## Phone Number Formatting
-
-CountryCodeKit provides standalone formatters that work with any app-owned text field.
+### Phone Number Formatting
 
 ```kotlin
 val national = CountryCodePhoneFormatter.format(
@@ -394,9 +581,31 @@ val international = CountryCodePhoneFormatter.format(
 )
 ```
 
+CountryCodeKit provides standalone formatters that work with any app-owned text field.
+
 Available final formats are `National`, `International`, `E164`, and `Rfc3966`. Invalid input or an unsupported region is returned unchanged.
 
+`CountryCodePhoneFormatter.normalizeInput` keeps only a leading `+` and decimal digits for stable raw state. `format` produces a final value using either a `CountryCode` or ISO region, while `formatAsYouType` returns an immediately formatted string for non-text-field use. For editable fields, prefer `CountryCodePhoneVisualTransformation` or the unified state's `visualTransformation` so formatting never changes the stored raw value.
+
 The Fully Customized Implementation above demonstrates the recommended `CountryCodePhoneState` integration. It coordinates the raw number, display formatting, validation, detection, and picker state while the application continues to render and own its text field. By default it enables cursor-safe as-you-type formatting, full phone validation, and country detection. Detection updates the picker only for a complete, valid international number beginning with `+`; national numbers retain the selected country. Automatic matches respect the configured country filter and are not added to recent selections.
+
+| Phone-state API | Responsibility |
+| --- | --- |
+| `rawNumber` | Normalized unformatted value to bind to the application text field. |
+| `updateNumber(input)` | Normalizes input and runs the selected validation/detection processing. |
+| `visualTransformation` | Cursor-aware, display-only country formatting for the application text field. |
+| `formatAsYouType` | Mutable switch controlling whether the visual transformation is active. |
+| `pickerState` / `pickerConfig` | Shared picker selection and configuration used by rendering and detection. |
+| `selectedCountry` | Currently selected or automatically detected country. |
+| `validation` / `isValid` | Latest optional validation result and convenience validity value. |
+| `international` / `e164` | Ready-to-use normalized formats when validation succeeds. |
+
+| Processing mode | Behavior |
+| --- | --- |
+| `None` | Stores normalized raw input without validation or detection. |
+| `Validate` | Validates against the selected country without changing it. |
+| `DetectCountry` | Detects complete valid international numbers without producing a validation result. |
+| `ValidateAndDetectCountry` | Performs both operations and is the default. |
 
 Choose lighter processing when needed:
 
@@ -433,11 +642,7 @@ val validationAndDetection = phone.validateAndDetectCountry(rawInput)
 
 `validate()` never changes the picker. The two detection operations update it only for a complete, valid international number beginning with `+`, respect supported or unsupported country filters, and do not add automatic matches to recent user selections. National numbers retain the existing country because they cannot be identified reliably.
 
----
-
-## Phone Number Validation
-
-CountryCodeKit validates locally with its maintained Kotlin Multiplatform port of Google libphonenumber.
+### Phone Number Validation
 
 ```kotlin
 val result = CountryCodePhoneValidator.validate(
@@ -453,6 +658,8 @@ when (result.status) {
     else -> Unit
 }
 ```
+
+CountryCodeKit validates locally with its maintained Kotlin Multiplatform port of Google libphonenumber.
 
 Choose only the validation level your app needs:
 
@@ -481,7 +688,10 @@ val result = CountryCodePhoneValidator.validate(
 - `e164`
 - `international`
 - `normalizedDigits`
+- `detectedCountry`
 - `isValid`
+
+`status` is one of `EMPTY`, `INVALID_REGION`, `NOT_A_NUMBER`, `NON_DIGIT_CHARACTERS`, `TOO_SHORT`, `TOO_LONG`, `IMPOSSIBLE`, `INVALID`, or `VALID`.
 
 This is structural phone-number validation, not ownership verification. CountryCodeKit does not send SMS messages, place calls, or contact a verification service.
 
