@@ -36,6 +36,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -61,6 +62,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.tharukack.countrycodekit.CountryCodeCatalog
+import io.github.tharukack.countrycodekit.CountryCodeFlagStyle
 import io.github.tharukack.countrycodekit.CountryCodePhoneResult
 import io.github.tharukack.countrycodekit.CountryCodePhoneProcessing
 import io.github.tharukack.countrycodekit.CountryCodePhoneStatus
@@ -75,6 +77,7 @@ import io.github.tharukack.countrycodekit.CountryCodePickerTriggerConfig
 import io.github.tharukack.countrycodekit.CountryCodePickerTriggerElement
 import io.github.tharukack.countrycodekit.rememberCountryCodePickerState
 import io.github.tharukack.countrycodekit.rememberCountryCodePhoneState
+import kotlin.math.roundToInt
 
 private val Accent = Color(0xFF2F987A)
 private val AccentBright = Color(0xFF46BD99)
@@ -137,26 +140,24 @@ private fun CountryCodeKitHome() {
     val backgroundInteractionSource = remember { MutableInteractionSource() }
     val initialCountry = remember { CountryCodeCatalog.findByIsoCode("AU")!! }
     val pickerOnlyState = rememberCountryCodePickerState(initialCountry)
-    var pickerStyle by remember { mutableStateOf(CountryCodePickerStyle.BottomSheet) }
-    var showRecents by rememberSaveable { mutableStateOf(true) }
-    var separateByLetter by rememberSaveable { mutableStateOf(true) }
-    val pickerConfig = remember(pickerStyle, showRecents, separateByLetter) {
-        CountryCodePickerConfig(
-            style = pickerStyle,
-            list = CountryCodePickerListConfig(
-                showRecentSelections = showRecents,
-                separateCountriesByLetter = separateByLetter,
+    val defaultPickerConfig = remember { CountryCodePickerConfig() }
+    val fieldPickerConfig = remember {
+        defaultPickerConfig.copy(
+            trigger = defaultPickerConfig.trigger.copy(
+                colors = defaultPickerConfig.trigger.colors.copy(
+                    container = SoftMint,
+                ),
             ),
         )
     }
     val detachedPhoneState = rememberCountryCodePhoneState(
         initialCountry = initialCountry,
         processing = CountryCodePhoneProcessing.DetectCountry,
-        pickerConfig = pickerConfig,
+        pickerConfig = fieldPickerConfig,
     )
     val attachedPhoneState = rememberCountryCodePhoneState(
         initialCountry = initialCountry,
-        pickerConfig = pickerConfig,
+        pickerConfig = fieldPickerConfig,
     )
     Box(
         modifier = Modifier
@@ -197,16 +198,10 @@ private fun CountryCodeKitHome() {
                     modifier = Modifier.padding(18.dp),
                     verticalArrangement = Arrangement.spacedBy(14.dp),
                 ) {
-                    SectionHeading(
-                        eyebrow = "INTEGRATION",
-                        title = "Attach it your way",
-                        supporting = "CountryCodeKit provides the picker. The phone fields shown here belong to the host app.",
-                    )
-
                     IntegrationExample(title = "1  Picker only") {
                         CountryCodePicker(
                             state = pickerOnlyState,
-                            config = pickerConfig,
+                            config = defaultPickerConfig,
                         )
                     }
 
@@ -338,8 +333,6 @@ private enum class TriggerTextSize { Small, Default, Large }
 
 private enum class TriggerColorChoice { Palette, Ink, Accent, White }
 
-private enum class TriggerChevronSize { Small, Default, Large }
-
 @Composable
 private fun PickerStylePage() {
     val initialCountry = remember { CountryCodeCatalog.findByIsoCode("AU")!! }
@@ -348,6 +341,8 @@ private fun PickerStylePage() {
     var elements by remember {
         mutableStateOf(CountryCodePickerTriggerElement.entries.toSet())
     }
+    var circularTriggerFlag by rememberSaveable { mutableStateOf(false) }
+    var circularListFlags by rememberSaveable { mutableStateOf(false) }
     var cornerRadius by rememberSaveable { mutableStateOf(14) }
     var usePillShape by rememberSaveable { mutableStateOf(false) }
     var palette by rememberSaveable { mutableStateOf(TriggerPalette.Default) }
@@ -356,7 +351,7 @@ private fun PickerStylePage() {
     var boldCountryCode by rememberSaveable { mutableStateOf(false) }
     var textColor by rememberSaveable { mutableStateOf(TriggerColorChoice.Palette) }
     var chevronColor by rememberSaveable { mutableStateOf(TriggerColorChoice.Palette) }
-    var chevronSize by rememberSaveable { mutableStateOf(TriggerChevronSize.Default) }
+    var chevronSize by rememberSaveable { mutableStateOf(12) }
     var searchCornerRadius by rememberSaveable { mutableStateOf(14) }
     var selectionCornerRadius by rememberSaveable { mutableStateOf(10) }
     var selectionBorderWidth by rememberSaveable { mutableStateOf(1) }
@@ -390,24 +385,22 @@ private fun PickerStylePage() {
         style = pickerStyle,
         trigger = CountryCodePickerTriggerConfig(
             triggerElements = elements,
+            flagStyle = if (circularTriggerFlag) CountryCodeFlagStyle.Circle else CountryCodeFlagStyle.Rounded,
             shape = triggerShape,
             borderWidth = if (showBorder) 1.dp else 0.dp,
             countryCodeTextStyle = TextStyle(
                 fontSize = when (textSize) {
-                    TriggerTextSize.Small -> 12.sp
-                    TriggerTextSize.Default -> 14.sp
+                    TriggerTextSize.Small -> 14.sp
+                    TriggerTextSize.Default -> 16.sp
                     TriggerTextSize.Large -> 18.sp
                 },
                 fontWeight = if (boldCountryCode) FontWeight.Bold else FontWeight.SemiBold,
             ),
-            chevronSize = when (chevronSize) {
-                TriggerChevronSize.Small -> 12.dp
-                TriggerChevronSize.Default -> 16.dp
-                TriggerChevronSize.Large -> 20.dp
-            },
+            chevronSize = chevronSize.dp,
             colors = triggerColors,
         ),
         list = CountryCodePickerListConfig(
+            flagStyle = if (circularListFlags) CountryCodeFlagStyle.Circle else CountryCodeFlagStyle.Rounded,
             search = CountryCodePickerSearchConfig(
                 shape = pickerShape(searchCornerRadius),
             ),
@@ -479,6 +472,21 @@ private fun PickerStylePage() {
                 }
             }
 
+            StyleControlCard(title = "Flag style", supporting = "Use the default rounded flags or enable circles independently.") {
+                FilterChip(
+                    selected = circularTriggerFlag,
+                    onClick = { circularTriggerFlag = !circularTriggerFlag },
+                    label = { Text("Circular trigger") },
+                    colors = sampleChipColors(),
+                )
+                FilterChip(
+                    selected = circularListFlags,
+                    onClick = { circularListFlags = !circularListFlags },
+                    label = { Text("Circular list") },
+                    colors = sampleChipColors(),
+                )
+            }
+
             StyleControlCard(title = "Shape", supporting = "Use a pill or choose the corner radius.") {
                 listOf(-1 to "Pill", 0 to "Square", 8 to "8 dp", 14 to "14 dp", 24 to "24 dp").forEach { (radius, label) ->
                     val selected = if (radius == -1) usePillShape else !usePillShape && cornerRadius == radius
@@ -528,12 +536,17 @@ private fun PickerStylePage() {
             }
 
             StyleControlCard(title = "Chevron size", supporting = "Size the dropdown indicator independently from the text.") {
-                TriggerChevronSize.entries.forEach { option ->
-                    FilterChip(
-                        selected = chevronSize == option,
-                        onClick = { chevronSize = option },
-                        label = { Text(option.label()) },
-                        colors = sampleChipColors(),
+                Column(modifier = Modifier.width(280.dp)) {
+                    Text(
+                        text = "$chevronSize dp",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Accent,
+                    )
+                    Slider(
+                        value = chevronSize.toFloat(),
+                        onValueChange = { chevronSize = it.roundToInt() },
+                        valueRange = 8f..24f,
+                        steps = 15,
                     )
                 }
             }
@@ -699,46 +712,12 @@ private fun SampleBottomBar(
 
 @Composable
 private fun SampleHeader() {
-    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier
-                    .size(46.dp)
-                    .background(
-                        Brush.linearGradient(listOf(AccentBright, Accent)),
-                        RoundedCornerShape(14.dp),
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = "CC",
-                    color = Color.White,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Black,
-                )
-            }
-            Spacer(Modifier.width(12.dp))
-            Column {
-                Text(
-                    text = "CountryCodeKit",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                )
-                Text(
-                    text = "Compose Multiplatform sample",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-        Spacer(Modifier.height(2.dp))
-        Text(
-            text = "Country selection that feels native.",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = Ink,
-        )
-    }
+    Text(
+        text = "Country selection that feels native.",
+        style = MaterialTheme.typography.headlineMedium,
+        fontWeight = FontWeight.Bold,
+        color = Ink,
+    )
 }
 
 @Composable
@@ -967,12 +946,6 @@ private fun TriggerColorChoice.resolve(paletteColor: Color): Color = when (this)
     TriggerColorChoice.Ink -> Ink
     TriggerColorChoice.Accent -> Accent
     TriggerColorChoice.White -> Color.White
-}
-
-private fun TriggerChevronSize.label(): String = when (this) {
-    TriggerChevronSize.Small -> "12 dp"
-    TriggerChevronSize.Default -> "16 dp"
-    TriggerChevronSize.Large -> "20 dp"
 }
 
 private fun pickerShape(cornerRadius: Int): Shape = if (cornerRadius == 0) {

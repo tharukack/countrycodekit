@@ -137,16 +137,19 @@ CountryCodePicker(
                 CountryCodePickerTriggerElement.CountryCode,
                 CountryCodePickerTriggerElement.Chevron,
             ),
+            flagStyle = CountryCodeFlagStyle.Rounded,
             shape = RoundedCornerShape(14.dp),
             borderWidth = 0.dp,
             countryCodeTextStyle = TextStyle(
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
             ),
-            chevronSize = 16.dp,
-            horizontalPadding = 12.dp,
-            verticalPadding = 9.dp,
-            elementSpacing = 8.dp,
+            chevronSize = 12.dp,
+            startPadding = 9.dp,
+            topPadding = 9.dp,
+            endPadding = 9.dp,
+            bottomPadding = 9.dp,
+            elementSpacing = 6.dp,
         ),
         list = CountryCodePickerListConfig(
             showSearch = true,
@@ -155,6 +158,7 @@ CountryCodePicker(
             recentSelectionLimit = 3,
             separateCountriesByLetter = true,
             autoFocusSearch = false,
+            flagStyle = CountryCodeFlagStyle.Rounded,
             search = CountryCodePickerSearchConfig(),
             selection = CountryCodePickerSelectionConfig(),
             textStyles = CountryCodePickerListTextStyles(),
@@ -337,7 +341,23 @@ Provide either `Supported` or `Unsupported`—never both. ISO codes are case-ins
 
 ### Custom flags
 
-Use the bundled PNG flags by default, or replace the flag slot without changing picker behavior:
+Rounded flags remain the default. Circular flags can be enabled independently for the trigger and list:
+
+```kotlin
+CountryCodePicker(
+    state = pickerState,
+    config = CountryCodePickerConfig(
+        trigger = CountryCodePickerTriggerConfig(
+            flagStyle = CountryCodeFlagStyle.Circle,
+        ),
+        list = CountryCodePickerListConfig(
+            flagStyle = CountryCodeFlagStyle.Circle,
+        ),
+    ),
+)
+```
+
+You can also replace the bundled PNG flag slot without changing picker behavior:
 
 ```kotlin
 CountryCodePicker(
@@ -348,7 +368,7 @@ CountryCodePicker(
 )
 ```
 
-`CountryCodeFlag(country)` is also available as a standalone composable. Custom countries without a bundled asset receive a compact ISO fallback inside the flag area; ISO abbreviations are never shown beside normal country names.
+`CountryCodeFlag(country, style = CountryCodeFlagStyle.Circle)` is also available as a standalone composable. Custom countries without a bundled asset receive a compact ISO fallback inside the flag area; ISO abbreviations are never shown beside normal country names.
 
 ### Custom trigger shape
 
@@ -383,8 +403,10 @@ CountryCodePicker(
                 fontWeight = FontWeight.Bold,
             ),
             chevronSize = 18.dp,
-            horizontalPadding = 12.dp,
-            verticalPadding = 9.dp,
+            startPadding = 9.dp,
+            topPadding = 9.dp,
+            endPadding = 9.dp,
+            bottomPadding = 9.dp,
             elementSpacing = 8.dp,
             colors = CountryCodePickerTriggerColors(
                 container = Color.White,

@@ -8,10 +8,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 enum class CountryCodePickerStyle { BottomSheet, Dialog, FullScreen }
 
 enum class CountryCodePickerTriggerElement { Flag, CountryCode, Chevron }
+
+enum class CountryCodeFlagStyle { Rounded, Circle }
 
 /** Restricts the picker with one mutually exclusive list of ISO 3166-1 alpha-2 codes. */
 sealed interface CountryCodePickerCountryFilter {
@@ -57,7 +60,7 @@ data class CountryCodePickerListColors(
 
 @Immutable
 data class CountryCodePickerTriggerColors(
-    val container: Color = Color(0xFFFFFFFF),
+    val container: Color = Color.Transparent,
     val content: Color = Color(0xFF17243A),
     val chevron: Color = Color(0xFF7D898D),
     val border: Color = Color.Transparent,
@@ -66,20 +69,31 @@ data class CountryCodePickerTriggerColors(
 @Immutable
 data class CountryCodePickerTriggerConfig(
     val triggerElements: Set<CountryCodePickerTriggerElement> = CountryCodePickerTriggerElement.entries.toSet(),
+    val flagStyle: CountryCodeFlagStyle = CountryCodeFlagStyle.Rounded,
     val shape: Shape = RoundedCornerShape(14.dp),
     val borderWidth: Dp = 0.dp,
-    val countryCodeTextStyle: TextStyle = TextStyle(fontWeight = FontWeight.SemiBold),
-    val chevronSize: Dp = 16.dp,
-    val horizontalPadding: Dp = 12.dp,
-    val verticalPadding: Dp = 9.dp,
-    val elementSpacing: Dp = 8.dp,
+    val countryCodeTextStyle: TextStyle = TextStyle(
+        fontSize = 16.sp,
+        fontWeight = FontWeight.SemiBold,
+    ),
+    val chevronSize: Dp = 12.dp,
+    val startPadding: Dp = 9.dp,
+    val topPadding: Dp = 9.dp,
+    val endPadding: Dp = 9.dp,
+    val bottomPadding: Dp = 9.dp,
+    val elementSpacing: Dp = 6.dp,
     val colors: CountryCodePickerTriggerColors = CountryCodePickerTriggerColors(),
 ) {
     init {
         require(triggerElements.isNotEmpty()) { "At least one picker trigger element is required." }
         require(borderWidth >= 0.dp) { "Trigger border width cannot be negative." }
         require(chevronSize > 0.dp) { "Chevron size must be greater than zero." }
-        require(horizontalPadding >= 0.dp && verticalPadding >= 0.dp) {
+        require(
+            startPadding >= 0.dp &&
+                topPadding >= 0.dp &&
+                endPadding >= 0.dp &&
+                bottomPadding >= 0.dp
+        ) {
             "Trigger padding cannot be negative."
         }
         require(elementSpacing >= 0.dp) { "Trigger element spacing cannot be negative." }
@@ -160,6 +174,7 @@ data class CountryCodePickerListConfig(
     val recentSelectionLimit: Int = 3,
     val separateCountriesByLetter: Boolean = true,
     val autoFocusSearch: Boolean = false,
+    val flagStyle: CountryCodeFlagStyle = CountryCodeFlagStyle.Rounded,
     val search: CountryCodePickerSearchConfig = CountryCodePickerSearchConfig(),
     val selection: CountryCodePickerSelectionConfig = CountryCodePickerSelectionConfig(),
     val strings: CountryCodePickerStrings = CountryCodePickerStrings(),

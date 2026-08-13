@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -29,7 +30,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -50,6 +50,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +59,24 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+
+private val TightChevronDown = ImageVector.Builder(
+    name = "CountryCodeKitChevronDown",
+    defaultWidth = 18.dp,
+    defaultHeight = 18.dp,
+    viewportWidth = 18f,
+    viewportHeight = 18f,
+).apply {
+    path(fill = SolidColor(Color.Black)) {
+        moveTo(1f, 4.5f)
+        lineTo(9f, 12.5f)
+        lineTo(17f, 4.5f)
+        lineTo(14.8f, 2.5f)
+        lineTo(9f, 8.3f)
+        lineTo(3.2f, 2.5f)
+        close()
+    }
+}.build()
 
 object CountryCodePickerTestTags {
     const val Trigger = "country-code-trigger"
@@ -80,8 +100,14 @@ fun CountryCodePicker(
     modifier: Modifier = Modifier,
     config: CountryCodePickerConfig = CountryCodePickerConfig(),
     enabled: Boolean = true,
-    flagContent: @Composable (CountryCode) -> Unit = { CountryCodeFlag(it) },
+    flagContent: (@Composable (CountryCode) -> Unit)? = null,
 ) {
+    val triggerFlagContent: @Composable (CountryCode) -> Unit = flagContent ?: {
+        CountryCodeFlag(it, style = config.trigger.flagStyle)
+    }
+    val listFlagContent: @Composable (CountryCode) -> Unit = flagContent ?: {
+        CountryCodeFlag(it, style = config.list.flagStyle)
+    }
     val countries = remember(config.countryFilter) {
         val requestedIsoCodes = when (val filter = config.countryFilter) {
             CountryCodePickerCountryFilter.All -> emptySet()
@@ -113,14 +139,16 @@ fun CountryCodePicker(
     ) {
         Row(
             modifier = Modifier.padding(
-                horizontal = config.trigger.horizontalPadding,
-                vertical = config.trigger.verticalPadding,
+                start = config.trigger.startPadding,
+                top = config.trigger.topPadding,
+                end = config.trigger.endPadding,
+                bottom = config.trigger.bottomPadding,
             ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(config.trigger.elementSpacing),
         ) {
             if (CountryCodePickerTriggerElement.Flag in config.trigger.triggerElements) {
-                flagContent(state.selectedCountry)
+                triggerFlagContent(state.selectedCountry)
             }
             if (CountryCodePickerTriggerElement.CountryCode in config.trigger.triggerElements) {
                 Text(
@@ -133,9 +161,11 @@ fun CountryCodePicker(
             }
             if (CountryCodePickerTriggerElement.Chevron in config.trigger.triggerElements) {
                 Icon(
-                    Icons.Default.KeyboardArrowDown,
+                    TightChevronDown,
                     contentDescription = config.list.strings.title,
-                    modifier = Modifier.size(config.trigger.chevronSize),
+                    modifier = Modifier
+                        .size(config.trigger.chevronSize)
+                        .offset(y = 2.dp),
                     tint = config.trigger.colors.chevron,
                 )
             }
@@ -147,7 +177,7 @@ fun CountryCodePicker(
             state = state,
             config = config,
             countries = countries,
-            flagContent = flagContent,
+            flagContent = listFlagContent,
         )
     }
 }

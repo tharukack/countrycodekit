@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,12 +29,19 @@ fun CountryCodeFlag(
     modifier: Modifier = Modifier,
     width: Dp = 28.dp,
     height: Dp = 21.dp,
+    style: CountryCodeFlagStyle = CountryCodeFlagStyle.Rounded,
 ) {
-    val shape = RoundedCornerShape(4.dp)
+    val shape = when (style) {
+        CountryCodeFlagStyle.Rounded -> RoundedCornerShape(4.dp)
+        CountryCodeFlagStyle.Circle -> CircleShape
+    }
+    val circleDiameter = (if (width < height) width else height) + 2.dp
+    val renderedWidth = if (style == CountryCodeFlagStyle.Circle) circleDiameter else width
+    val renderedHeight = if (style == CountryCodeFlagStyle.Circle) circleDiameter else height
     val resource = flagResourceFor(country.isoCode)
     Box(
         modifier = modifier
-            .size(width, height)
+            .size(renderedWidth, renderedHeight)
             .clip(shape)
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .border(0.5.dp, Color.Black.copy(alpha = 0.12f), shape),
