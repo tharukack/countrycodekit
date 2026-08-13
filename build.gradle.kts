@@ -77,7 +77,7 @@ mavenPublishing {
     )
 
     pom {
-        name.set("CountryCodeKit")
+        name.set("CountryCodeKit Compose")
         description.set(
             "A modern Compose Multiplatform country calling-code picker with bundled flags and libphonenumber validation."
         )

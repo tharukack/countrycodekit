@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to CountryCodeKit will be documented in this file.
+All notable changes to CountryCodeKit Compose will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project follows semantic versioning.
 
@@ -24,6 +24,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Sample changes
 
 - Simplified the sample home header and clarified default versus app-styled picker integrations.
+
+### Project and documentation
+
+- Updated the public product name to CountryCodeKit Compose while preserving the existing Maven coordinates, packages, modules, and APIs.
 
 ## [0.1.0] - 2026-08-12
 

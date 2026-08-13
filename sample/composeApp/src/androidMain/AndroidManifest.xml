@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <application android:theme="@style/AppTheme" android:label="CountryCodeKit Sample">
+    <application android:theme="@style/AppTheme" android:label="CountryCodeKit Compose">
         <activity
             android:name=".MainActivity"
             android:exported="true"

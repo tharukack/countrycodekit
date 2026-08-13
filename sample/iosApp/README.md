@@ -1,4 +1,4 @@
-# CountryCodeKit iOS Sample
+# CountryCodeKit Compose iOS Sample
 
 This SwiftUI host runs the shared Compose Multiplatform sample on iOS.
 

@@ -320,7 +320,7 @@ private fun CountryCodeKitHome() {
             FeatureSummary()
 
             Text(
-                text = "CountryCodeKit · Android + iOS · Offline metadata",
+                text = "CountryCodeKit Compose · Android + iOS · Offline metadata",
                 modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

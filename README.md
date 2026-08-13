@@ -1,4 +1,4 @@
-<h1 align="center">CountryCodeKit</h1>
+<h1 align="center">CountryCodeKit Compose</h1>
 
 <p align="center">
   <strong>A polished country calling-code picker for Compose Multiplatform</strong>
@@ -43,7 +43,7 @@
 
 ## Installation
 
-Add CountryCodeKit to the Compose Multiplatform source set where the picker is used:
+Add CountryCodeKit Compose to the Compose Multiplatform source set where the picker is used:
 
 ```kotlin
 kotlin {
@@ -55,7 +55,7 @@ kotlin {
 }
 ```
 
-CountryCodeKit is published to Maven Central. Use the same dependency from shared code for both Android and iOS Compose Multiplatform targets.
+CountryCodeKit Compose is published to Maven Central. Use the same dependency from shared code for both Android and iOS Compose Multiplatform targets.
 
 ---
 
@@ -231,7 +231,7 @@ val phoneState = rememberCountryCodePhoneState(
 // This layout and its text field belong to your app.
 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
     Row(verticalAlignment = Alignment.Top) {
-        // CountryCodeKit renders the picker and keeps its selected country in phoneState.
+        // CountryCodeKit Compose renders the picker and keeps its selected country in phoneState.
         CountryCodePicker(
             state = phoneState.pickerState,
             config = phoneState.pickerConfig,
@@ -251,7 +251,7 @@ Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             ),
             isError = phoneState.rawNumber.isNotEmpty() && !phoneState.isValid,
             supportingText = {
-                // Validation contains the latest result returned by CountryCodeKit.
+                // Validation contains the latest result returned by CountryCodeKit Compose.
                 phoneState.validation?.let { result ->
                     Text(
                         if (result.isValid) "Valid phone number" else result.status.name,
@@ -267,7 +267,7 @@ Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
 }
 ```
 
-The `OutlinedTextField` belongs to the application; CountryCodeKit only supplies state and `visualTransformation`. `updateNumber` keeps the stored value unformatted, validates it, and detects the country when a complete valid international number such as `+61…` is entered. The visual transformation adds display-only spacing without input delay or cursor jumps. Detection respects `pickerConfig.countryFilter`, while manual choices become recent selections. Valid results expose both `international` and `e164` values.
+The `OutlinedTextField` belongs to the application; CountryCodeKit Compose only supplies state and `visualTransformation`. `updateNumber` keeps the stored value unformatted, validates it, and detects the country when a complete valid international number such as `+61…` is entered. The visual transformation adds display-only spacing without input delay or cursor jumps. Detection respects `pickerConfig.countryFilter`, while manual choices become recent selections. Valid results expose both `international` and `e164` values.
 
 `Color.Unspecified` means “use the host Material theme.” This example uses a supported-country filter; use `Unsupported` instead when it is shorter to describe the countries your app must hide. Dialog and full-screen settings are intentionally omitted because the selected style is `BottomSheet`.
 
@@ -500,7 +500,7 @@ val countryListColors = CountryCodePickerCountryListColors(
 )
 ```
 
-CountryCodeKit ships with a white country-list surface, soft-neutral search field, accessible mint selection colors, and Material-inherited text colors. All country-list colors belong inside `CountryCodePickerCountryListConfig`.
+CountryCodeKit Compose ships with a white country-list surface, soft-neutral search field, accessible mint selection colors, and Material-inherited text colors. All country-list colors belong inside `CountryCodePickerCountryListConfig`.
 
 | Color | Default | Purpose |
 | --- | --- | --- |
@@ -581,7 +581,7 @@ val international = CountryCodePhoneFormatter.format(
 )
 ```
 
-CountryCodeKit provides standalone formatters that work with any app-owned text field.
+CountryCodeKit Compose provides standalone formatters that work with any app-owned text field.
 
 Available final formats are `National`, `International`, `E164`, and `Rfc3966`. Invalid input or an unsupported region is returned unchanged.
 
@@ -659,7 +659,7 @@ when (result.status) {
 }
 ```
 
-CountryCodeKit validates locally with its maintained Kotlin Multiplatform port of Google libphonenumber.
+CountryCodeKit Compose validates locally with its maintained Kotlin Multiplatform port of Google libphonenumber.
 
 Choose only the validation level your app needs:
 
@@ -693,7 +693,7 @@ val result = CountryCodePhoneValidator.validate(
 
 `status` is one of `EMPTY`, `INVALID_REGION`, `NOT_A_NUMBER`, `NON_DIGIT_CHARACTERS`, `TOO_SHORT`, `TOO_LONG`, `IMPOSSIBLE`, `INVALID`, or `VALID`.
 
-This is structural phone-number validation, not ownership verification. CountryCodeKit does not send SMS messages, place calls, or contact a verification service.
+This is structural phone-number validation, not ownership verification. CountryCodeKit Compose does not send SMS messages, place calls, or contact a verification service.
 
 ---
 
@@ -705,7 +705,7 @@ This is structural phone-number validation, not ownership verification. CountryC
 | iOS devices | Supported | `iosArm64` static framework |
 | iOS simulator | Supported | `iosSimulatorArm64` static framework |
 
-CountryCodeKit does not publish desktop, standalone JVM, web, watchOS, tvOS, Linux, or Windows targets.
+CountryCodeKit Compose does not publish desktop, standalone JVM, web, watchOS, tvOS, Linux, or Windows targets.
 
 ---
 
@@ -730,10 +730,10 @@ The sample demonstrates every picker style and live validation. The test suite c
 [`UPSTREAMS.properties`](UPSTREAMS.properties) records the exact upstream revisions used by each release:
 
 - [Google libphonenumber](https://github.com/google/libphonenumber) for calling codes, parsing, formatting, and validation metadata under Apache License 2.0.
-- [flag-icons](https://github.com/lipis/flag-icons) for SVG flag artwork under the MIT License. CountryCodeKit converts reviewed source artwork into Android/iOS-compatible PNG resources.
+- [flag-icons](https://github.com/lipis/flag-icons) for SVG flag artwork under the MIT License. CountryCodeKit Compose converts reviewed source artwork into Android/iOS-compatible PNG resources.
 - [libphonenumber-kotlin](https://github.com/luca992/libphonenumber-kotlin) as the original Kotlin port baseline under Apache License 2.0.
 
-Run the sync scripts against reviewed local upstream checkouts, update the pins, run the complete suite, and publish a new CountryCodeKit version. A weekly workflow checks whether pinned sources have advanced. Vendored-source changes must never be shipped silently in an existing artifact version.
+Run the sync scripts against reviewed local upstream checkouts, update the pins, run the complete suite, and publish a new CountryCodeKit Compose version. A weekly workflow checks whether pinned sources have advanced. Vendored-source changes must never be shipped silently in an existing artifact version.
 
 See [`third_party/`](third_party/) for complete notices and provenance.
 
@@ -741,4 +741,4 @@ See [`third_party/`](third_party/) for complete notices and provenance.
 
 ## License
 
-CountryCodeKit is available under the [MIT License](LICENSE). Bundled third-party data, source ports, and artwork retain their respective licenses described in the third-party notice directories.
+CountryCodeKit Compose is available under the [MIT License](LICENSE). Bundled third-party data, source ports, and artwork retain their respective licenses described in the third-party notice directories.

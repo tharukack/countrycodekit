@@ -41,6 +41,6 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
       - name: Create GitHub release
-        run: gh release create "$RELEASE_TAG" --verify-tag --generate-notes --title "CountryCodeKit ${RELEASE_TAG#v}"
+        run: gh release create "$RELEASE_TAG" --verify-tag --generate-notes --title "CountryCodeKit Compose ${RELEASE_TAG#v}"
         env:
           GH_TOKEN: ${{ github.token }}
