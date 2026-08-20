@@ -50,9 +50,9 @@ The real iOS sample demonstrates the searchable country picker, bottom-sheet, di
     <th width="33.33%">Full screen</th>
   </tr>
   <tr>
-    <td><img src="docs/assets/countrycodekit-mode-bottom-sheet.png" alt="CountryCodeKit Compose bottom-sheet picker" width="100%" /></td>
-    <td><img src="docs/assets/countrycodekit-mode-dialog.png" alt="CountryCodeKit Compose dialog picker" width="100%" /></td>
-    <td><img src="docs/assets/countrycodekit-mode-full-screen.png" alt="CountryCodeKit Compose full-screen picker" width="100%" /></td>
+    <td><img src="docs/assets/sam_bott.jpg" alt="CountryCodeKit Compose bottom-sheet picker" width="100%" /></td>
+    <td><img src="docs/assets/sam_dial.jpg" alt="CountryCodeKit Compose dialog picker" width="100%" /></td>
+    <td><img src="docs/assets/sam_full.jpg" alt="CountryCodeKit Compose full-screen picker" width="100%" /></td>
   </tr>
 </table>
 
