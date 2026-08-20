@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#071625">
-  <meta name="description" content="CountryCodeKit Compose is a polished country calling-code picker with offline phone formatting and validation for Android and iOS.">
+  <meta name="description" content="CountryCodeKit Compose is a polished country calling code picker with offline phone formatting and validation for Android and iOS.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <link rel="canonical" href="https://tharukack.github.io/countrycodekit/">
   <meta property="og:title" content="CountryCodeKit Compose">
@@ -17,13 +17,16 @@
   <link rel="icon" type="image/png" sizes="512x512" href="./assets/countrycodekit-favicon.png">
   <link rel="apple-touch-icon" href="./assets/countrycodekit-favicon.png">
   <link rel="preload" href="./assets/countrycodekit-logo-lockup-transparent.png" as="image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="./styles.css">
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "SoftwareSourceCode",
       "name": "CountryCodeKit Compose",
-      "description": "A country calling-code picker with offline phone formatting and validation for Compose Multiplatform on Android and iOS.",
+      "description": "A country calling code picker with offline phone formatting and validation for Compose Multiplatform on Android and iOS.",
       "url": "https://tharukack.github.io/countrycodekit/",
       "codeRepository": "https://github.com/tharukack/countrycodekit",
       "programmingLanguage": "Kotlin",
@@ -58,7 +61,7 @@
         <a href="#quick-start">Quick start</a>
         <a href="#api">API</a>
         <a href="#platforms">Platforms</a>
-        <a class="nav-github" href="https://github.com/tharukack/countrycodekit" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+        <a class="nav-github" href="https://github.com/tharukack/countrycodekit" target="_blank" rel="noreferrer">GitHub <span class="material-icons mui-icon mui-icon-inline" aria-hidden="true">open_in_new</span></a>
       </nav>
     </div>
   </header>
@@ -70,13 +73,13 @@
       <div class="container hero-layout">
         <div class="hero-copy reveal">
           <a class="eyebrow" href="https://central.sonatype.com/artifact/io.github.tharukack/countrycodekit" target="_blank" rel="noreferrer">
-            <span class="status-dot"></span> Available on Maven Central <span aria-hidden="true">↗</span>
+            <span class="status-dot"></span> Available on Maven Central <span class="material-icons mui-icon mui-icon-inline" aria-hidden="true">open_in_new</span>
           </a>
           <h1>Country selection<br><span>that feels native.</span></h1>
-          <p class="hero-lede">A polished country calling-code picker for Compose Multiplatform—with fast search, recent selections, format-as-you-type, and local phone validation.</p>
+          <p class="hero-lede">A polished country calling code picker for Compose Multiplatform with fast search, recent selections, format as you type, and local phone validation.</p>
           <div class="hero-actions">
-            <a class="button button-primary" href="#quick-start">Get started <span aria-hidden="true">→</span></a>
-            <a class="button button-secondary" href="#demo"><span aria-hidden="true">▶</span> Watch the demo</a>
+            <a class="button button-primary" href="#quick-start">Get started <span class="material-icons mui-icon" aria-hidden="true">arrow_forward</span></a>
+            <a class="button button-secondary" href="#demo"><span class="material-icons mui-icon" aria-hidden="true">play_arrow</span> Watch the demo</a>
           </div>
           <div class="install-pill">
             <span class="prompt" aria-hidden="true">$</span>
@@ -84,47 +87,36 @@
             <button class="copy-button" type="button" data-copy='implementation("io.github.tharukack:countrycodekit:1.1.0")' aria-label="Copy Gradle dependency"><span data-copy-label>Copy</span></button>
           </div>
           <ul class="hero-proof" aria-label="Library highlights">
-            <li><span>✓</span> Android</li><li><span>✓</span> iOS</li><li><span>✓</span> Offline first</li>
+            <li><span class="material-icons mui-icon" aria-hidden="true">check_circle</span> Android</li><li><span class="material-icons mui-icon" aria-hidden="true">check_circle</span> iOS</li><li><span class="material-icons mui-icon" aria-hidden="true">check_circle</span> Offline first</li>
           </ul>
         </div>
 
-        <div class="hero-product reveal reveal-delay" aria-label="Interactive country picker preview">
+        <div class="hero-product hero-screenshot-product reveal reveal-delay" aria-label="CountryCodeKit bottom sheet preview">
           <div class="product-orbit" aria-hidden="true"></div>
-          <div class="picker-card">
-            <div class="picker-head"><div><small>COUNTRY PICKER</small><h2>Select your country</h2></div><span aria-hidden="true">×</span></div>
-            <label class="search-box"><span aria-hidden="true"></span><input type="search" placeholder="Search country or code" aria-label="Search preview countries" data-country-search></label>
-            <p class="picker-label">Recent</p>
-            <div class="recent-row">
-              <button class="recent-country selected" type="button" data-select-country="AU"><img src="./assets/flag_au.png" alt=""><span>Australia<small>+61</small></span></button>
-              <button class="recent-country" type="button" data-select-country="CA"><img src="./assets/flag_ca.png" alt=""><span>Canada<small>+1</small></span></button>
-              <button class="recent-country" type="button" data-select-country="US"><img src="./assets/flag_us.png" alt=""><span>United States<small>+1</small></span></button>
+          <div class="hero-phone-wrap">
+            <span class="phone-button phone-button-silent" aria-hidden="true"></span>
+            <span class="phone-button phone-button-volume-up" aria-hidden="true"></span>
+            <span class="phone-button phone-button-volume-down" aria-hidden="true"></span>
+            <span class="phone-button phone-button-power" aria-hidden="true"></span>
+            <div class="hero-phone">
+              <span class="phone-island" aria-hidden="true"></span>
+              <img src="./assets/sam_bott.jpg" alt="CountryCodeKit picker shown as an opened bottom sheet">
             </div>
-            <p class="picker-label all-label">All countries</p>
-            <div class="country-list" data-country-list>
-              <button class="country-row selected" type="button" data-country="AU" data-name="australia 61"><img src="./assets/flag_au.png" alt="Flag of Australia"><span>Australia</span><strong>+61</strong></button>
-              <button class="country-row" type="button" data-country="CA" data-name="canada 1"><img src="./assets/flag_ca.png" alt="Flag of Canada"><span>Canada</span><strong>+1</strong></button>
-              <button class="country-row" type="button" data-country="NZ" data-name="new zealand 64"><img src="./assets/flag_nz.png" alt="Flag of New Zealand"><span>New Zealand</span><strong>+64</strong></button>
-              <button class="country-row" type="button" data-country="US" data-name="united states usa 1"><img src="./assets/flag_us.png" alt="Flag of the United States"><span>United States</span><strong>+1</strong></button>
-              <p class="empty-state" data-empty hidden>No matching country in this preview.</p>
-            </div>
-          </div>
-          <div class="validation-card" aria-live="polite">
-            <span class="validation-icon">✓</span><div><small>PHONE VALIDATION</small><strong data-validation-label>Valid Australian number</strong><span data-phone-format>+61 412 345 678</span></div>
           </div>
         </div>
       </div>
 
       <div class="container capability-row reveal">
-        <div><span>271</span><p><strong>Countries</strong><small>Reviewed bundled flags</small></p></div>
-        <div><span>⌕</span><p><strong>Instant search</strong><small>Name, ISO, or code</small></p></div>
-        <div><span>◫</span><p><strong>3 presentations</strong><small>Sheet, dialog, full screen</small></p></div>
-        <div><span>✓</span><p><strong>Local validation</strong><small>Google metadata</small></p></div>
+        <div><span class="material-icons mui-icon" aria-hidden="true">public</span><p><strong>271 countries</strong><small>Reviewed bundled flags</small></p></div>
+        <div><span class="material-icons mui-icon" aria-hidden="true">search</span><p><strong>Instant search</strong><small>Name, ISO, or code</small></p></div>
+        <div><span class="material-icons mui-icon" aria-hidden="true">view_agenda</span><p><strong>3 presentations</strong><small>Sheet, dialog, full screen</small></p></div>
+        <div><span class="material-icons mui-icon" aria-hidden="true">verified</span><p><strong>Local validation</strong><small>Google metadata</small></p></div>
       </div>
     </section>
 
     <section class="section demo-section" id="demo">
       <div class="container">
-        <div class="section-heading centered reveal"><p class="section-kicker">See it in motion</p><h2>One picker. Every essential flow.</h2><p>The real iOS sample moves through presentation styles, formatting, and validation while keeping the picker fast and familiar.</p></div>
+        <div class="section-heading centered reveal"><p class="section-kicker">See it in motion</p><h2>One picker. Every essential flow.</h2></div>
         <div class="demo-frame reveal">
           <video controls autoplay muted loop playsinline preload="metadata" aria-label="CountryCodeKit Compose demo running in the iOS Simulator">
             <source src="./assets/country-code-picker-demo-16x9.mp4" type="video/mp4">
@@ -136,23 +128,47 @@
 
     <section class="section" id="features">
       <div class="container">
-        <div class="section-heading reveal"><p class="section-kicker">Presentation, your way</p><h2>Fits the interaction your screen needs.</h2><p>Switch presentation style through configuration—without changing the picker content or state model.</p></div>
+        <div class="section-heading reveal"><p class="section-kicker">Presentation, your way</p><h2>Three native presentation modes.</h2></div>
         <div class="style-grid">
-          <article class="style-card reveal"><div class="mini-app bottom-sheet"><div class="mini-content"></div><div class="mini-picker"><i></i><b>Select your country</b><span></span><span></span><span></span></div></div><h3>Bottom sheet</h3><p>The native-feeling default for compact mobile flows, with configurable height and gestures.</p></article>
-          <article class="style-card reveal"><div class="mini-app dialog"><div class="mini-content"></div><div class="mini-picker"><b>Select your country</b><span></span><span></span><span></span></div></div><h3>Dialog</h3><p>A focused modal experience with configurable width, shape, border, and elevation.</p></article>
-          <article class="style-card reveal"><div class="mini-app fullscreen"><div class="mini-picker"><b>‹ &nbsp; Select your country</b><span></span><span></span><span></span><span></span></div></div><h3>Full screen</h3><p>More space for discovery while preserving the same search, recents, and selection behavior.</p></article>
+          <article class="style-card style-screenshot-card reveal">
+            <div class="hero-phone-wrap mode-phone-wrap">
+              <span class="phone-button phone-button-silent" aria-hidden="true"></span><span class="phone-button phone-button-volume-up" aria-hidden="true"></span><span class="phone-button phone-button-volume-down" aria-hidden="true"></span><span class="phone-button phone-button-power" aria-hidden="true"></span>
+              <div class="hero-phone mode-phone"><span class="phone-island" aria-hidden="true"></span><img src="./assets/sam_bott.jpg" alt="CountryCodeKit picker using the bottom sheet presentation" loading="lazy"></div>
+            </div>
+            <h3>Bottom sheet</h3><p>Compact and native.</p>
+          </article>
+          <article class="style-card style-screenshot-card reveal">
+            <div class="hero-phone-wrap mode-phone-wrap">
+              <span class="phone-button phone-button-silent" aria-hidden="true"></span><span class="phone-button phone-button-volume-up" aria-hidden="true"></span><span class="phone-button phone-button-volume-down" aria-hidden="true"></span><span class="phone-button phone-button-power" aria-hidden="true"></span>
+              <div class="hero-phone mode-phone"><span class="phone-island" aria-hidden="true"></span><img src="./assets/sam_dial.jpg" alt="CountryCodeKit picker using the dialog presentation" loading="lazy"></div>
+            </div>
+            <h3>Dialog</h3><p>Focused and centered.</p>
+          </article>
+          <article class="style-card style-screenshot-card reveal">
+            <div class="hero-phone-wrap mode-phone-wrap">
+              <span class="phone-button phone-button-silent" aria-hidden="true"></span><span class="phone-button phone-button-volume-up" aria-hidden="true"></span><span class="phone-button phone-button-volume-down" aria-hidden="true"></span><span class="phone-button phone-button-power" aria-hidden="true"></span>
+              <div class="hero-phone mode-phone"><span class="phone-island" aria-hidden="true"></span><img src="./assets/sam_full.jpg" alt="CountryCodeKit picker using the full screen presentation" loading="lazy"></div>
+            </div>
+            <h3>Full screen</h3><p>Maximum browsing space.</p>
+          </article>
+        </div>
+
+        <div class="customization-strip reveal">
+          <span class="material-icons mui-icon" aria-hidden="true">tune</span>
+          <div><h3>Customize it your way.</h3><p>Match the picker to your product.</p></div>
+          <div class="customization-options" aria-label="Customization options"><span>Colors</span><span>Shapes</span><span>Typography</span><span>Flags</span><span>Filters</span><span>Behavior</span></div>
         </div>
 
         <div class="intelligence-grid">
-          <article class="feature-panel reveal"><div class="feature-icon">Aa</div><p class="section-kicker">Format as you type</p><h3>Country-aware formatting.</h3><p>Show familiar local spacing while keeping a clean phone number value.</p><div class="phone-input-demo"><span><img src="./assets/flag_au.png" alt="Flag of Australia"> +61</span><strong>412 345 678</strong></div></article>
-          <article class="feature-panel reveal"><div class="feature-icon">✓</div><p class="section-kicker">Google metadata</p><h3>Validate locally, with confidence.</h3><p>Possible and valid checks, E.164 output, international formatting, and automatic detection—without network requests.</p><div class="validation-demo"><span>✓</span><div><strong>Valid phone number</strong><small>+61412345678 · Australia</small></div></div></article>
+          <article class="feature-panel reveal"><div class="feature-icon"><span class="material-icons mui-icon" aria-hidden="true">text_fields</span></div><p class="section-kicker">Format as you type</p><h3>Country aware formatting.</h3><p>Show familiar local spacing while keeping a clean phone number value.</p><div class="phone-input-demo"><span><img src="./assets/flag_au.png" alt="Flag of Australia"> +61</span><strong>412 345 678</strong></div></article>
+          <article class="feature-panel reveal"><div class="feature-icon"><span class="material-icons mui-icon" aria-hidden="true">verified</span></div><p class="section-kicker">Google metadata</p><h3>Validate locally, with confidence.</h3><p>Get possible and valid checks, E.164 output, international formatting, and automatic detection without network requests.</p><div class="validation-demo"><span class="material-icons mui-icon" aria-hidden="true">check</span><div><strong>Valid phone number</strong><small>+61412345678 · Australia</small></div></div></article>
         </div>
       </div>
     </section>
 
     <section class="section docs-section" id="installation">
       <div class="container docs-narrow">
-        <div class="section-heading reveal"><p class="section-kicker">Installation</p><h2>Add it once to shared Compose UI.</h2><p>CountryCodeKit Compose is available from Maven Central for Android and iOS targets.</p></div>
+        <div class="section-heading reveal"><p class="section-kicker">Installation</p><h2>Add it to shared Compose UI.</h2></div>
         <div class="code-card reveal"><div class="code-top"><span>build.gradle.kts</span><button class="copy-button" type="button" data-copy='implementation("io.github.tharukack:countrycodekit:1.1.0")'><span data-copy-label>Copy</span></button></div><pre><code><span class="code-muted">kotlin {</span>
     sourceSets {
         commonMain.dependencies {
@@ -165,7 +181,7 @@
 
     <section class="section quick-section" id="quick-start">
       <div class="container quick-grid">
-        <div class="section-heading reveal"><p class="section-kicker">Quick start</p><h2>Useful defaults in two calls.</h2><p>Create saveable picker state, render the picker, and read the selected country anywhere in your Compose UI.</p><ul class="check-list"><li>Default bottom sheet</li><li>Searchable 271-country catalog</li><li>Persistent recent selections</li><li>Material-aware styling</li></ul></div>
+        <div class="section-heading reveal"><p class="section-kicker">Quick start</p><h2>Useful defaults in two calls.</h2><ul class="check-list"><li>Default bottom sheet</li><li>271 countries</li><li>Persistent recents</li><li>Material styling</li></ul></div>
         <div class="code-card reveal"><div class="code-top"><span>CountryPicker.kt</span><button class="copy-button" type="button" data-copy='val pickerState = rememberCountryCodePickerState()\n\nCountryCodePicker(\n    state = pickerState,\n)'><span data-copy-label>Copy</span></button></div><pre><code><span class="code-muted">val</span> pickerState = <span class="code-accent">rememberCountryCodePickerState</span>()
 
 <span class="code-accent">CountryCodePicker</span>(
@@ -179,7 +195,7 @@ Text(country.formattedCallingCode)</code></pre></div>
 
     <section class="section api-section" id="api">
       <div class="container">
-        <div class="section-heading reveal"><p class="section-kicker">API guide</p><h2>Everything you need. Nothing extra.</h2><p>Use the defaults, then configure only the parts your app needs.</p></div>
+        <div class="section-heading reveal"><p class="section-kicker">API guide</p><h2>Everything you need.</h2></div>
         <div class="api-layout">
           <nav class="api-nav reveal" aria-label="API guide sections">
             <strong>On this page</strong>
@@ -196,7 +212,7 @@ Text(country.formattedCallingCode)</code></pre></div>
 
           <div class="api-content">
             <article class="api-card reveal" id="api-core">
-              <div class="api-title"><span>01</span><div><h3>Core picker</h3><p>Create state, render the picker, read the selection.</p></div></div>
+              <div class="api-title"><span>01</span><div><h3>Core picker</h3></div></div>
               <div class="code-card compact"><pre><code><span class="code-muted">val</span> state = <span class="code-accent">rememberCountryCodePickerState</span>(
     initialCountry = CountryCodeCatalog.findByIsoCode("AU")!!,
     initialRecentSelections = listOf("NZ", "US"),
@@ -209,7 +225,7 @@ Text(country.formattedCallingCode)</code></pre></div>
             </article>
 
             <article class="api-card reveal" id="api-config">
-              <div class="api-title"><span>02</span><div><h3>Configuration</h3><p>One object controls the complete picker.</p></div></div>
+              <div class="api-title"><span>02</span><div><h3>Configuration</h3></div></div>
               <div class="code-card compact"><pre><code><span class="code-muted">val</span> config = <span class="code-accent">CountryCodePickerConfig</span>(
     style = CountryCodePickerStyle.Dialog,
     countryFilter = CountryCodePickerCountryFilter.Supported(
@@ -223,7 +239,7 @@ Text(country.formattedCallingCode)</code></pre></div>
             </article>
 
             <article class="api-card reveal" id="api-presentations">
-              <div class="api-title"><span>03</span><div><h3>Presentations</h3><p>The same picker content in three layouts.</p></div></div>
+              <div class="api-title"><span>03</span><div><h3>Presentations</h3></div></div>
               <div class="api-columns three">
                 <div><strong>BottomSheet</strong><code>heightFraction</code><code>gesturesEnabled</code><code>shape</code><code>showDragHandle</code><code>borderWidth</code><code>tonalElevation</code><code>minWidth / maxWidth</code></div>
                 <div><strong>Dialog</strong><code>height</code><code>shape</code><code>borderWidth</code><code>tonalElevation</code><code>shadowElevation</code><code>minWidth / maxWidth</code><code>dismiss options</code></div>
@@ -232,7 +248,7 @@ Text(country.formattedCallingCode)</code></pre></div>
             </article>
 
             <article class="api-card reveal" id="api-list">
-              <div class="api-title"><span>04</span><div><h3>Country list</h3><p>Search, recents, sections, text, selection, and colors.</p></div></div>
+              <div class="api-title"><span>04</span><div><h3>Country list</h3></div></div>
               <div class="code-card compact"><pre><code>CountryCodePickerCountryListConfig(
     showSearch = true,
     showCallingCode = true,
@@ -242,11 +258,11 @@ Text(country.formattedCallingCode)</code></pre></div>
     autoFocusSearch = false,
     flagStyle = CountryCodeFlagStyle.Rounded,
 )</code></pre></div>
-              <div class="api-table"><div><code>strings</code><span>Title, search placeholder, section labels, empty state, accessibility labels.</span></div><div><code>search</code><span>Shape, height, padding, icon sizes, clear button.</span></div><div><code>selection</code><span>Row and recent-card shapes, borders, spacing, padding, indicators.</span></div><div><code>textStyles</code><span>Title, search, sections, country name, calling code, empty state.</span></div><div><code>colors</code><span>Accent, surfaces, content, selection, divider, border, scrim.</span></div></div>
+              <div class="api-table"><div><code>strings</code><span>Title, search placeholder, section labels, empty state, accessibility labels.</span></div><div><code>search</code><span>Shape, height, padding, icon sizes, clear button.</span></div><div><code>selection</code><span>Row and recent card shapes, borders, spacing, padding, indicators.</span></div><div><code>textStyles</code><span>Title, search, sections, country name, calling code, empty state.</span></div><div><code>colors</code><span>Accent, surfaces, content, selection, divider, border, scrim.</span></div></div>
             </article>
 
             <article class="api-card reveal" id="api-trigger">
-              <div class="api-title"><span>05</span><div><h3>Trigger &amp; flags</h3><p>Choose what opens the picker and how flags render.</p></div></div>
+              <div class="api-title"><span>05</span><div><h3>Trigger &amp; flags</h3></div></div>
               <div class="code-card compact"><pre><code>CountryCodePickerTriggerConfig(
     triggerElements = setOf(
         CountryCodePickerTriggerElement.Flag,
@@ -261,7 +277,7 @@ Text(country.formattedCallingCode)</code></pre></div>
             </article>
 
             <article class="api-card reveal" id="api-phone-state">
-              <div class="api-title"><span>06</span><div><h3>Phone state</h3><p>Picker, number, validation, and detection in one state holder.</p></div></div>
+              <div class="api-title"><span>06</span><div><h3>Phone state</h3></div></div>
               <div class="code-card compact"><pre><code><span class="code-muted">val</span> phone = <span class="code-accent">rememberCountryCodePhoneState</span>(
     initialCountry = CountryCodeCatalog.findByIsoCode("AU")!!,
     formatAsYouType = true,
@@ -274,7 +290,7 @@ CountryCodePicker(phone.pickerState, config = phone.pickerConfig)</code></pre></
             </article>
 
             <article class="api-card reveal" id="api-formatting">
-              <div class="api-title"><span>07</span><div><h3>Formatting</h3><p>Use unified phone state or the standalone formatter.</p></div></div>
+              <div class="api-title"><span>07</span><div><h3>Formatting</h3></div></div>
               <div class="code-card compact"><pre><code><span class="code-muted">val</span> formatted = CountryCodePhoneFormatter.format(
     number = "0412345678",
     country = state.selectedCountry,
@@ -289,7 +305,7 @@ CountryCodePicker(phone.pickerState, config = phone.pickerConfig)</code></pre></
             </article>
 
             <article class="api-card reveal" id="api-validation">
-              <div class="api-title"><span>08</span><div><h3>Validation</h3><p>Local checks backed by bundled Google metadata.</p></div></div>
+              <div class="api-title"><span>08</span><div><h3>Validation</h3></div></div>
               <div class="code-card compact"><pre><code><span class="code-muted">val</span> result = CountryCodePhoneValidator.validate(
     number = phoneNumber,
     country = state.selectedCountry,
@@ -297,11 +313,11 @@ CountryCodePicker(phone.pickerState, config = phone.pickerConfig)</code></pre></
 )
 
 <span class="code-muted">if</span> (result.isValid) submit(result.e164)</code></pre></div>
-              <div class="api-table"><div><code>PhoneNumber</code><span>Full country-aware validation.</span></div><div><code>PossibleLength</code><span>Possible length for the selected country.</span></div><div><code>DigitsOnly</code><span>ASCII digits only.</span></div><div><code>DigitsAndPossibleLength</code><span>Digits plus possible country length.</span></div><div><code>CustomLength(range, digitsOnly)</code><span>Application-defined length rule.</span></div></div>
+              <div class="api-table"><div><code>PhoneNumber</code><span>Full country aware validation.</span></div><div><code>PossibleLength</code><span>Possible length for the selected country.</span></div><div><code>DigitsOnly</code><span>ASCII digits only.</span></div><div><code>DigitsAndPossibleLength</code><span>Digits plus possible country length.</span></div><div><code>CustomLength(range, digitsOnly)</code><span>Application defined length rule.</span></div></div>
             </article>
 
             <article class="api-card reveal" id="api-catalog">
-              <div class="api-title"><span>09</span><div><h3>Catalog &amp; results</h3><p>Country lookup and normalized phone output.</p></div></div>
+              <div class="api-title"><span>09</span><div><h3>Catalog &amp; results</h3></div></div>
               <div class="api-columns">
                 <div><strong>CountryCode</strong><code>isoCode</code><code>name</code><code>callingCode</code><code>formattedCallingCode</code></div>
                 <div><strong>CountryCodeCatalog</strong><code>countries</code><code>findByIsoCode()</code><code>search()</code><code>hasBundledFlag()</code></div>
@@ -316,9 +332,9 @@ CountryCodePicker(phone.pickerState, config = phone.pickerConfig)</code></pre></
 
     <section class="section platform-section" id="platforms">
       <div class="container">
-        <div class="section-heading centered reveal"><p class="section-kicker">Built for shared UI</p><h2>One Compose API. Two native targets.</h2><p>CountryCodeKit keeps the picker and phone intelligence in common code while using local platform storage for recents.</p></div>
-        <div class="platform-grid reveal"><div><span>🤖</span><strong>Android</strong><small>Compose Multiplatform</small></div><div><span></span><strong>iOS</strong><small>Compose Multiplatform</small></div><div><span>⌁</span><strong>Offline</strong><small>No runtime phone service</small></div><div><span>◇</span><strong>MIT</strong><small>Open source</small></div></div>
-        <div class="cta reveal"><div><p class="section-kicker">Ready to ship?</p><h2>Make country selection feel like part of your app.</h2></div><div><a class="button button-primary" href="https://github.com/tharukack/countrycodekit" target="_blank" rel="noreferrer">View on GitHub ↗</a><a class="button button-secondary" href="#installation">Install 1.1.0</a></div></div>
+        <div class="section-heading centered reveal"><p class="section-kicker">Built for shared UI</p><h2>One Compose API. Two native targets.</h2></div>
+        <div class="platform-grid reveal"><div><span class="material-icons mui-icon" aria-hidden="true">android</span><strong>Android</strong><small>Compose Multiplatform</small></div><div><span class="material-icons mui-icon" aria-hidden="true">apple</span><strong>iOS</strong><small>Compose Multiplatform</small></div><div><span class="material-icons mui-icon" aria-hidden="true">cloud_off</span><strong>Offline</strong><small>No runtime phone service</small></div><div><span class="material-icons mui-icon" aria-hidden="true">code</span><strong>MIT</strong><small>Open source</small></div></div>
+        <div class="cta reveal"><div><p class="section-kicker">Ready to ship?</p><h2>Make country selection feel like part of your app.</h2></div><div><a class="button button-primary" href="https://github.com/tharukack/countrycodekit" target="_blank" rel="noreferrer">View on GitHub <span class="material-icons mui-icon" aria-hidden="true">open_in_new</span></a><a class="button button-secondary" href="#installation">Install 1.1.0</a></div></div>
       </div>
     </section>
   </main>

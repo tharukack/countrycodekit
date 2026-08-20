@@ -33,25 +33,3 @@ const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add('visible'); revealObserver.unobserve(entry.target); } });
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach((element) => revealObserver.observe(element));
-
-const countries = {
-  AU: { label: 'Valid Australian number', phone: '+61 412 345 678' },
-  CA: { label: 'Valid Canadian number', phone: '+1 416 555 0123' },
-  NZ: { label: 'Valid New Zealand number', phone: '+64 21 123 4567' },
-  US: { label: 'Valid United States number', phone: '+1 202 555 0147' }
-};
-const selectCountry = (code) => {
-  document.querySelectorAll('[data-country], [data-select-country]').forEach((item) => item.classList.toggle('selected', item.dataset.country === code || item.dataset.selectCountry === code));
-  document.querySelector('[data-validation-label]').textContent = countries[code].label;
-  document.querySelector('[data-phone-format]').textContent = countries[code].phone;
-};
-document.querySelectorAll('[data-country], [data-select-country]').forEach((item) => item.addEventListener('click', () => selectCountry(item.dataset.country || item.dataset.selectCountry)));
-
-const search = document.querySelector('[data-country-search]');
-const rows = [...document.querySelectorAll('[data-country]')];
-search?.addEventListener('input', () => {
-  const query = search.value.trim().toLowerCase().replace(/^\+/, '');
-  let matches = 0;
-  rows.forEach((row) => { const visible = row.dataset.name.includes(query); row.hidden = !visible; matches += Number(visible); });
-  document.querySelector('[data-empty]').hidden = matches !== 0;
-});
