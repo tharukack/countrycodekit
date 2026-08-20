@@ -43,6 +43,19 @@
 
 The real iOS sample demonstrates the searchable country picker, bottom-sheet, dialog and full-screen presentations, format-as-you-type phone input, and local Google libphonenumber validation.
 
+<table>
+  <tr>
+    <th width="33.33%">Bottom sheet</th>
+    <th width="33.33%">Dialog</th>
+    <th width="33.33%">Full screen</th>
+  </tr>
+  <tr>
+    <td><img src="docs/assets/countrycodekit-mode-bottom-sheet.png" alt="CountryCodeKit Compose bottom-sheet picker" width="100%" /></td>
+    <td><img src="docs/assets/countrycodekit-mode-dialog.png" alt="CountryCodeKit Compose dialog picker" width="100%" /></td>
+    <td><img src="docs/assets/countrycodekit-mode-full-screen.png" alt="CountryCodeKit Compose full-screen picker" width="100%" /></td>
+  </tr>
+</table>
+
 ---
 
 ## Features
