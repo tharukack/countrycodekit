@@ -15,7 +15,7 @@
 
 <p align="center">
   <strong>A polished country calling-code picker for Compose Multiplatform.</strong><br />
-  Search countries, display recent selections, browse A–Z sections, format input, and validate phone numbers locally on Android and iOS.
+  Search countries, display recent selections, format input, and validate phone numbers locally on Android and iOS.
 </p>
 
 <p align="center">
@@ -40,9 +40,6 @@
 <p align="center">
   <img src="docs/assets/country-code-picker-demo-16x9.gif" alt="CountryCodeKit Compose running on iOS" width="100%" />
 </p>
-
-The real iOS sample demonstrates the searchable country picker, bottom-sheet, dialog and full-screen presentations, format-as-you-type phone input, and local Google libphonenumber validation.
-
 <table>
   <tr>
     <th width="33.33%">Bottom sheet</th>
@@ -55,22 +52,6 @@ The real iOS sample demonstrates the searchable country picker, bottom-sheet, di
     <td><img src="docs/assets/sam_full.jpg" alt="CountryCodeKit Compose full-screen picker" width="100%" /></td>
   </tr>
 </table>
-
----
-
-## Features
-
-- Search-first country picker with the search field fixed at the top.
-- Responsive recent-selection cards instead of hard-coded popular countries: one fills the row, while two or three divide it evenly.
-- Optional alphabetical country sections, enabled by default.
-- Clean rows with country flag, full country name, and calling code—no ISO abbreviations.
-- Selected-country highlighting and an accessible selection indicator.
-- 271 bundled, transparent PNG flags rendered from reviewed `flag-icons` sources.
-- Country names, calling codes, parsing, formatting, and validation backed by Google libphonenumber metadata.
-- Offline possible/valid checks, E.164 formatting, and international formatting.
-- Bottom-sheet, dialog, and full-screen styles.
-- Android and iOS targets only.
-- No verification service, network request, or external runtime phone-number wrapper.
 
 ---
 
@@ -87,9 +68,6 @@ kotlin {
     }
 }
 ```
-
-CountryCodeKit Compose is published to Maven Central. Use the same dependency from shared code for both Android and iOS Compose Multiplatform targets.
-
 ---
 
 ## Quick Start
@@ -125,13 +103,13 @@ val pickerState = rememberCountryCodePickerState(
 )
 ```
 
-The three most recent manual selections are shared automatically between picker instances and persisted locally on the device. They survive navigation, picker-state recreation, process termination, and app restarts. Country detection does not add a recent selection, and CountryCodeKit Compose stores only ISO country codes—never phone numbers or other user data.
+The three most recent manual selections are shared automatically between picker instances and persisted locally on the device. They survive navigation, picker-state recreation, process termination, and app restarts. Country detection does not add a recent selection.
 
 ---
 
 ## Fully Customized Implementation
 
-This example uses the default bottom-sheet style as a complete phone-field integration. It shows picker customization together with app-owned text input, cursor-safe as-you-type formatting, full validation, automatic country detection, country filtering, recent selections, and normalized outputs. Keep only the values your application needs.
+This example uses the default bottom-sheet style as a complete phone-field integration. It shows picker customization together with app-owned text input, as-you-type formatting, full validation, automatic country detection, country filtering, recent selections, and normalized outputs. Keep only the values your application needs.
 
 ```kotlin
 val australia = CountryCodeCatalog.findByIsoCode("AU")!!
@@ -300,7 +278,7 @@ Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
 }
 ```
 
-The `OutlinedTextField` belongs to the application; CountryCodeKit Compose only supplies state and `visualTransformation`. `updateNumber` keeps the stored value unformatted, validates it, and detects the country when a complete valid international number such as `+61…` is entered. The visual transformation adds display-only spacing without input delay or cursor jumps. Detection respects `pickerConfig.countryFilter`, while manual choices become recent selections. Valid results expose both `international` and `e164` values.
+The `OutlinedTextField` belongs to the application; CountryCodeKit Compose only supplies state and `visualTransformation`. `updateNumber` keeps the stored value unformatted, validates it, and detects the country when a complete valid international number such as `+61…` is entered. The `visualTransformation` adds display-only formatting without input delays or cursor jumps. Detection respects `pickerConfig.countryFilter`, while manual choices become recent selections. Valid results expose both `international` and `e164` values.
 
 `Color.Unspecified` means “use the host Material theme.” This example uses a supported-country filter; use `Unsupported` instead when it is shorter to describe the countries your app must hide. Dialog and full-screen settings are intentionally omitted because the selected style is `BottomSheet`.
 
@@ -320,7 +298,7 @@ The example fully customizes the selected bottom-sheet path and demonstrates the
 
 ## API and Customization Reference
 
-The bottom-sheet example above is intentionally detailed. This reference explains the public API by responsibility so normal integrations can configure only what they need.
+This reference explains the public API by responsibility so normal integrations can configure only what they need.
 
 ### API Map
 
