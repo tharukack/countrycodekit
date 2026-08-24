@@ -71,7 +71,15 @@ kotlin {
 
 ### Compatibility
 
-CountryCodeKit Compose `1.1.0` is built and tested with Kotlin `2.3.0`, Compose Multiplatform `1.11.1`, and Material 3 `1.10.0-alpha05`. Align your application with these versions, or verify dependency compatibility when using an older Compose Multiplatform stack.
+CountryCodeKit Compose `1.1.0` is built and tested with:
+
+| Dependency | Tested version |
+|---|---|
+| Kotlin | `2.3.0` |
+| Compose Multiplatform | `1.11.1` |
+| Material 3 | `1.10.0-alpha05` |
+
+Align your application with these versions, or verify dependency compatibility when using an older Compose Multiplatform stack.
 
 ---
 
